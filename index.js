@@ -1,6 +1,5 @@
 let score = 0;
 
-
 /*henter id */
 const container = document.getElementById('container');
 const scoreDisplay = document.getElementById('score')
