@@ -9,10 +9,14 @@
 
 </head>
 <body>
+<h2>Spirit Guide</h2>
+<p>Score: <span id="score">0</span></p>
+<div id="container">
+    <div class="cirkel"></div>
 
-
-
-
+</div>
+<br>
+<button id="reset-button">Reset Score</button>
 
 
 </body>
