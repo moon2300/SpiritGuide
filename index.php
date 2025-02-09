@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="index.js"></script>
 </head>
 <body>
 <h2>Spirit Guide</h2>
@@ -20,6 +19,7 @@
 <button id="reset-button">Reset Score</button>
 
 
+<script src="index.js"></script>
 
 </body>
 </html>
