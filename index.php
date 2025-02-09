@@ -15,12 +15,13 @@
 </div>
 
 <p>Timer: <span id="timer">0</span></p>
+<button id="start-button">Start Game</button>
 
 <input id="save-score-section">
     <input type="text" id="player-name" class="player-name-input" placeholder="Enter your name">
     <button id="save-score-button">Save Score</button>
 
-<button id="start-button">Start Game</button>
+
 
 <div id="leaderboard">
     <h3>Leaderboard</h3>
