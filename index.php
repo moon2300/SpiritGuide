@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="index.js" defer></script>
+
+
+
 </head>
 <body>
 <h2>Spirit Guide</h2>
@@ -21,15 +25,15 @@
     <input type="text" id="player-name" class="player-name-input" placeholder="Enter your name">
     <button id="save-score-button">Save Score</button>
 
+<iframe src="https://highscores.martindilling.com/games/15/embed?bgColor=111827&textColor=59cf8f&borderColor=3f485b" title="Highscore table for Spirit Guide" width="100%" height="100%"></iframe>
 
 
-<div id="leaderboard">
+<!--<div id="leaderboard">
     <h3>Leaderboard</h3>
     <div id="leaderboard-entries"></div>
-</div>
+</div> -->
 
 
-<script src="index.js"></script>
 
 </body>
 </html>
