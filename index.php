@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="index.js" defer></script>
 
+    <iframe src="https://highscores.martindilling.com/games/23/embed?bgColor=111827&textColor=59cf8f&borderColor=3f485b" title="Highscore table for Spirit Guide" width="100%" height="100%"></iframe>
 
 
 </head>
@@ -25,7 +26,6 @@
     <input type="text" id="player-name" class="player-name-input" placeholder="Enter your name">
     <button id="save-score-button">Save Score</button>
 
-<iframe src="https://highscores.martindilling.com/games/15/embed?bgColor=111827&textColor=59cf8f&borderColor=3f485b" title="Highscore table for Spirit Guide" width="100%" height="100%"></iframe>
 
 
 <!--<div id="leaderboard">
