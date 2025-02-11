@@ -1,3 +1,7 @@
+
+
+
+
 body {
     text-align: center;
     font-family: 'Arial', sans-serif;
@@ -46,7 +50,7 @@ button:hover {
     background-color: darkred;
 }
 
-/* Center the Start Game button */
+
 #start-button {
     display: block;
     margin: 20px auto;
