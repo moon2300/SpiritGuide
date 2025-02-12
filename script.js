@@ -20,7 +20,6 @@ let sceneOffset; // Moves the whole game
 
 let platforms = [];
 let sticks = [];
-let trees = [];
 let score = 0;
 let gameRunning = true;
 
@@ -83,42 +82,10 @@ function resetGame() {
     generatePlatform();
 
     sticks = [{ x: platforms[0].x + platforms[0].w, length: 0, rotation: 0 }];
-
-    trees = [];
-    generateTree();
-    generateTree();
-    generateTree();
-    generateTree();
-    generateTree();
-    generateTree();
-    generateTree();
-    generateTree();
-    generateTree();
-    generateTree();
-
     heroX = platforms[0].x + platforms[0].w - heroDistanceFromEdge;
     heroY = 0;
 
     draw();
-}
-
-function generateTree() {
-    const minimumGap = 30;
-    const maximumGap = 150;
-
-    // X coordinate of the right edge of the furthest tree
-    const lastTree = trees[trees.length - 1];
-    let furthestX = lastTree ? lastTree.x : 0;
-
-    const x =
-        furthestX +
-        minimumGap +
-        Math.floor(Math.random() * (maximumGap - minimumGap));
-
-    const treeColors = ["#6D8821", "#8FAC34", "#98B333"];
-    const color = treeColors[Math.floor(Math.random() * 3)];
-
-    trees.push({ x, color });
 }
 
 function generatePlatform() {
@@ -235,8 +202,7 @@ function animate(timestamp) {
                     }
 
                     generatePlatform();
-                    generateTree();
-                    generateTree();
+
                 }
 
                 phase = "walking";
