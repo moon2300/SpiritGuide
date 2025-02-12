@@ -7,7 +7,7 @@ function apiCall(string $method, string $url, ?array $payLoad = null): array
     $headers = [
         'accept: application/json',
         'Content-Type: application/json',
-        'Authorization: Bearer ' . $config['apt_token'],
+        'Authorization: Bearer ' . $config['api_token'],
     ];
 
 
