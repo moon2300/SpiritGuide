@@ -21,12 +21,9 @@ let sceneOffset; // Moves the whole game
 let platforms = [];
 let sticks = [];
 let trees = [];
-
-// Todo: Save high score to localStorage (?)
-
 let score = 0;
+let gameRunning = true;
 
-// Configuration
 const canvasWidth = 375;
 const canvasHeight = 375;
 const platformHeight = 100;
@@ -63,6 +60,12 @@ const introductionElement = document.getElementById("introduction");
 const perfectElement = document.getElementById("perfect");
 const restartButton = document.getElementById("restart");
 const scoreElement = document.getElementById("score");
+
+const gameOverOverlay = document.querySelector('.game-over-overlay');
+const nameInput = document.querySelector('.submit-name-input');
+const submitButton = document.querySelector('.submit-button');
+const exitButton = document.querySelector('.exit-button');
+const gameOverScore = document.querySelector('.game-over-score');
 
 // Initialize layout
 resetGame();
@@ -147,8 +150,6 @@ function generatePlatform() {
     platforms.push({ x, w });
 }
 
-resetGame();
-
 // If space was pressed restart the game
 window.addEventListener("keydown", function (event) {
     if (event.key == " ") {
@@ -158,6 +159,7 @@ window.addEventListener("keydown", function (event) {
     }
 });
 
+// KNAPPER OG DERES ROLLER ----------------------------------------------------------------------------------------
 window.addEventListener("mousedown", function (event) {
     if (phase == "waiting") {
         lastTimestamp = undefined;
@@ -181,8 +183,36 @@ window.addEventListener("resize", function (event) {
 
 window.requestAnimationFrame(animate);
 
+
+// RESTART KNAP
+restartButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    resetGame();
+    restartButton.style.display = "none";
+    gameRunning = true; // Restart the animation loop
+    window.requestAnimationFrame(animate);
+});
+
+// Set up event listeners for the buttons in the overlay:
+submitButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    submitScore();
+});
+
+exitButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    gameOverOverlay.style.display = "none";
+    // Restart the game when the player clicks “Restart Game”
+    resetGame();
+    gameRunning = true;
+    window.requestAnimationFrame(animate);
+});
+
+// ANIMATION -----------------------------------------------------------------------------------------------------
 // The main game loop
 function animate(timestamp) {
+    if (!gameRunning) return;
+
     if (!lastTimestamp) {
         lastTimestamp = timestamp;
         window.requestAnimationFrame(animate);
@@ -257,6 +287,8 @@ function animate(timestamp) {
                 phase = "waiting";
             }
             break;
+
+
         }
         case "falling": {
             if (sticks.last().rotation < 180)
@@ -266,8 +298,7 @@ function animate(timestamp) {
             const maxHeroY =
                 platformHeight + 100 + (window.innerHeight - canvasHeight) / 2;
             if (heroY > maxHeroY) {
-                restartButton.style.display = "block";
-                return;
+                endGame();
             }
             break;
         }
@@ -276,10 +307,14 @@ function animate(timestamp) {
     }
 
     draw();
+    lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
 
-    lastTimestamp = timestamp;
+
 }
+
+// CANVAS TEGNE ---------------------------------------------------------------------------------------------------
+
 
 // Returns the platform the stick hit (if it didn't hit any stick then return undefined)
 function thePlatformTheStickHits() {
@@ -324,11 +359,28 @@ function draw() {
     ctx.restore();
 }
 
-restartButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    resetGame();
-    restartButton.style.display = "none";
-});
+
+function drawPlatforms() {
+    platforms.forEach(({ x, w }) => {
+        // Draw platform with only the top corners rounded.
+        ctx.fillStyle = "grey";
+        drawRoundedTopRect(
+            x,
+            canvasHeight - platformHeight,
+            w,
+            platformHeight + (window.innerHeight - canvasHeight) / 2,
+            10 // Adjust the radius as needed
+        );
+
+        if (sticks.last().x < x) {
+            // Compute the center of the perfect area.
+            const centerX = x + w / 2;
+            const centerY = canvasHeight - platformHeight + perfectAreaSize / 2;
+            drawChristianCross(centerX, centerY, perfectAreaSize, "black");
+        }
+
+    });
+}
 
 // top radius
 function drawRoundedTopRect(x, y, width, height, radius) {
@@ -349,9 +401,6 @@ function drawRoundedTopRect(x, y, width, height, radius) {
     ctx.fill();
 }
 
-// Draws a Christian-style cross centered at (cx, cy)
-// "size" is the total height of the vertical bar.
-// The horizontal bar is drawn at 1/3 of the way down from the top and is half the vertical bar's height.
 function drawChristianCross(cx, cy, size, color) {
     // Choose a thickness that is a fraction of the vertical size.
     const thickness = size / 7;
@@ -378,34 +427,6 @@ function drawChristianCross(cx, cy, size, color) {
         horizWidth,                  // width of the horizontal bar
         thickness                   // thickness of the horizontal bar
     );
-}
-
-
-
-
-
-
-
-function drawPlatforms() {
-    platforms.forEach(({ x, w }) => {
-        // Draw platform with only the top corners rounded.
-        ctx.fillStyle = "grey";
-        drawRoundedTopRect(
-            x,
-            canvasHeight - platformHeight,
-            w,
-            platformHeight + (window.innerHeight - canvasHeight) / 2,
-            10 // Adjust the radius as needed
-        );
-
-        if (sticks.last().x < x) {
-            // Compute the center of the perfect area.
-            const centerX = x + w / 2;
-            const centerY = canvasHeight - platformHeight + perfectAreaSize / 2;
-            drawChristianCross(centerX, centerY, perfectAreaSize, "black");
-        }
-
-    });
 }
 
 function drawGhost(x, y, size) {
@@ -457,6 +478,20 @@ function drawGhost(x, y, size) {
     ctx.fill();
 }
 
+function drawRoundedRect(x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + radius);
+    ctx.lineTo(x, y + height - radius);
+    ctx.arcTo(x, y + height, x + radius, y + height, radius);
+    ctx.lineTo(x + width - radius, y + height);
+    ctx.arcTo(x + width, y + height, x + width, y + height - radius, radius);
+    ctx.lineTo(x + width, y + radius);
+    ctx.arcTo(x + width, y, x + width - radius, y, radius);
+    ctx.lineTo(x + radius, y);
+    ctx.arcTo(x, y, x, y + radius, radius);
+    ctx.fill();
+}
+
 function drawHero() {
     ctx.save();
 
@@ -491,17 +526,52 @@ function drawHero() {
 
 }
 
-function drawRoundedRect(x, y, width, height, radius) {
+function drawGhost(x, y, size) {
+    ctx.fillStyle = "white";
+
+    // Ghost body (symmetric version)
     ctx.beginPath();
-    ctx.moveTo(x, y + radius);
-    ctx.lineTo(x, y + height - radius);
-    ctx.arcTo(x, y + height, x + radius, y + height, radius);
-    ctx.lineTo(x + width - radius, y + height);
-    ctx.arcTo(x + width, y + height, x + width, y + height - radius, radius);
-    ctx.lineTo(x + width, y + radius);
-    ctx.arcTo(x + width, y, x + width - radius, y, radius);
-    ctx.lineTo(x + radius, y);
-    ctx.arcTo(x, y, x, y + radius, radius);
+    // Start at the top center of the ghost’s head
+    ctx.moveTo(x, y - size * 1.5);
+    // Draw the left side of the ghost
+    ctx.quadraticCurveTo(x - size, y - size * 1.5, x - size * 0.8, y + size * 0.5);
+    // Create the left bottom “wave” of the ghost’s skirt
+    ctx.quadraticCurveTo(x - size * 0.6, y + size * 0.9, x - size * 0.3, y + size * 0.8);
+    // Form the bottom dip/center of the ghost
+    ctx.quadraticCurveTo(x, y + size * 1.1, x + size * 0.3, y + size * 0.8);
+    // Mirror the left bottom wave on the right side
+    ctx.quadraticCurveTo(x + size * 0.6, y + size * 0.9, x + size * 0.8, y + size * 0.5);
+    // Draw the right side up back to the top center
+    ctx.quadraticCurveTo(x + size, y - size * 1.5, x, y - size * 1.5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Eyes
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(x - size * 0.3, y - size * 0.7, size * 0.15, 0, Math.PI * 2);
+    ctx.arc(x + size * 0.3, y - size * 0.7, size * 0.15, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eye highlights
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(x - size * 0.25, y - size * 0.75, size * 0.05, 0, Math.PI * 2);
+    ctx.arc(x + size * 0.35, y - size * 0.75, size * 0.05, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cheeks
+    ctx.fillStyle = "pink";
+    ctx.beginPath();
+    ctx.arc(x - size * 0.45, y - size * 0.5, size * 0.1, 0, Math.PI * 2);
+    ctx.arc(x + size * 0.45, y - size * 0.5, size * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mouth
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(x, y - size * 0.4, size * 0.1, 0, Math.PI, false);
     ctx.fill();
 }
 
@@ -525,77 +595,59 @@ function drawSticks() {
     });
 }
 
-function drawBackground() {
-    // Draw sky
-    var gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
-    gradient.addColorStop(0, "#BBD691");
-    gradient.addColorStop(1, "#FEF1E1");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
-    // Draw hills
-    drawHill(hill1BaseHeight, hill1Amplitude, hill1Stretch, "#95C629");
-    drawHill(hill2BaseHeight, hill2Amplitude, hill2Stretch, "#659F1C");
-
-    // Draw trees
-    trees.forEach((tree) => drawTree(tree.x, tree.color));
+function randomBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// A hill is a shape under a stretched out sinus wave
-function drawHill(baseHeight, amplitude, stretch, color) {
-    ctx.beginPath();
-    ctx.moveTo(0, window.innerHeight);
-    ctx.lineTo(0, getHillY(0, baseHeight, amplitude, stretch));
-    for (let i = 0; i < window.innerWidth; i++) {
-        ctx.lineTo(i, getHillY(i, baseHeight, amplitude, stretch));
-    }
-    ctx.lineTo(window.innerWidth, window.innerHeight);
-    ctx.fillStyle = color;
-    ctx.fill();
+// Generate a random name as a default value
+function generateRandomName() {
+    const firstPart = ['Bæ', 'Poop', 'Prut', 'lækker', 'Numse'];
+    const secondPart = ['fjæs', 'tærte', 'fis', 'mås', 'Hul'];
+    return `${firstPart[randomBetween(0, firstPart.length - 1)]}${secondPart[randomBetween(0, secondPart.length - 1)]}`;
 }
 
-function drawTree(x, color) {
-    ctx.save();
-    ctx.translate(
-        (-sceneOffset * backgroundSpeedMultiplier + x) * hill1Stretch,
-        getTreeY(x, hill1BaseHeight, hill1Amplitude)
-    );
-
-    const treeTrunkHeight = 5;
-    const treeTrunkWidth = 2;
-    const treeCrownHeight = 25;
-    const treeCrownWidth = 10;
-
-    // Draw trunk
-    ctx.fillStyle = "#7D833C";
-    ctx.fillRect(
-        -treeTrunkWidth / 2,
-        -treeTrunkHeight,
-        treeTrunkWidth,
-        treeTrunkHeight
-    );
-
-    // Draw crown
-    ctx.beginPath();
-    ctx.moveTo(-treeCrownWidth / 2, -treeTrunkHeight);
-    ctx.lineTo(0, -(treeTrunkHeight + treeCrownHeight));
-    ctx.lineTo(treeCrownWidth / 2, -treeTrunkHeight);
-    ctx.fillStyle = color;
-    ctx.fill();
-
-    ctx.restore();
+// Set up the name input with a generated name
+function initializeNameInput() {
+    nameInput.value = generateRandomName();
+    nameInput.select();
 }
 
-function getHillY(windowX, baseHeight, amplitude, stretch) {
-    const sineBaseY = window.innerHeight - baseHeight;
-    return (
-        Math.sinus((sceneOffset * backgroundSpeedMultiplier + windowX) * stretch) *
-        amplitude +
-        sineBaseY
-    );
+// Temporarily disable the submit and exit buttons to prevent spamming
+function disableButtonsTemporarily() {
+    submitButton.setAttribute('disabled', 'true');
+    exitButton.setAttribute('disabled', 'true');
+
+    setTimeout(() => {
+        submitButton.removeAttribute('disabled');
+        exitButton.removeAttribute('disabled');
+    }, 3000); // Delay (in milliseconds)
 }
 
-function getTreeY(x, baseHeight, amplitude) {
-    const sineBaseY = window.innerHeight - baseHeight;
-    return Math.sinus(x) * amplitude + sineBaseY;
+// This function is called when the game is over:
+function endGame() {
+    gameRunning = false;  // Stop the animation loop
+    gameOverOverlay.style.display = "flex"; // Show the overlay
+    gameOverScore.textContent = score;       // Display the final score
+    disableButtonsTemporarily();
+    initializeNameInput();
+}
+
+// Submit the score to your server (adjust the URL and logic as needed)
+function submitScore() {
+    fetch('/', {
+        method: 'POST',
+        body: JSON.stringify({
+            player: UI.nameInput.value,
+            score: Game.calculateScore(),
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) throw new Error('Failed to submit score');
+            return response.json();
+        })
+        .then(() => (window.location.href = '/?page=highscore'))
+        .catch((error) => {
+            console.error(error);
+        });
 }
