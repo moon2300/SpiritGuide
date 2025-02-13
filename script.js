@@ -69,6 +69,8 @@ function resetGame() {
     sceneOffset = 0;
     score = 0;
 
+    gameRunning = true
+
     introductionElement.style.opacity = 1;
     perfectElement.style.opacity = 0;
     restartButton.style.display = "none";
@@ -120,6 +122,7 @@ window.addEventListener("keydown", function (event) {
 
 // KNAPPER OG DERES ROLLER ----------------------------------------------------------------------------------------
 window.addEventListener("mousedown", function (event) {
+    console.log("mousedown detected, phase:", phase);
     if (phase == "waiting") {
         lastTimestamp = undefined;
         introductionElement.style.opacity = 0;
@@ -143,8 +146,6 @@ window.addEventListener("resize", function (event) {
 window.requestAnimationFrame(animate);
 
 
-// RESTART KNAP
-
 
 // Set up event listeners for the buttons in the overlay:
 submitButton.addEventListener('click', (e) => {
@@ -153,7 +154,6 @@ submitButton.addEventListener('click', (e) => {
     resetGame();
     submitScore();
     gameRunning = true;
-    window.requestAnimationFrame(animate);
 });
 
 

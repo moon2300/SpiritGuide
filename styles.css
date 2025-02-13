@@ -9,6 +9,16 @@ body {
     cursor: pointer;
 }
 
+
+
+
+.game-over-overlay.hidden {
+    display: none;
+    pointer-events: none;
+}
+
+
+
 .container {
     display: flex;
     justify-content: center;
