@@ -76,7 +76,7 @@ function resetGame() {
 
     // The first platform is always the same
     // x + w has to match paddingX
-    platforms = [{ x: 50, w: 50 }];
+    platforms = [{ x: 50, w: 80 }];
     generatePlatform();
     generatePlatform();
     generatePlatform();
@@ -92,7 +92,7 @@ function resetGame() {
 function generatePlatform() {
     const minimumGap = 40;
     const maximumGap = 200;
-    const minimumWidth = 20;
+    const minimumWidth = 25;
     const maximumWidth = 100;
 
     // X coordinate of the right edge of the furthest platform
