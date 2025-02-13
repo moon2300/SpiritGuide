@@ -19,6 +19,8 @@ let heroX; // Changes when moving forward
 let heroY; // Only changes when falling
 let sceneOffset; // Moves the whole game
 
+let platformPattern = null;
+
 let platforms = [];
 let sticks = [];
 let score = 0;
@@ -27,7 +29,7 @@ let gameRunning = true;
 const canvasWidth = 375;
 const canvasHeight = 375;
 const platformHeight = 100;
-const heroDistanceFromEdge = 10; // While waiting
+const heroDistanceFromEdge = 25; // While waiting
 const paddingX = 100; // The waiting position of the hero in from the original canvas size
 const perfectAreaSize = 25;
 
@@ -40,6 +42,9 @@ const fallingSpeed = 2;
 
 const heroWidth = 17; // 24
 const heroHeight = 30; // 40
+
+const platformImage = new Image();
+platformImage.src = "texture3.png"; // Make sure the image path is correct
 
 const canvas = document.getElementById("game");
 canvas.width = window.innerWidth; // Make the Canvas full screen
@@ -59,7 +64,10 @@ const exitButton = document.querySelector('.exit-button');
 const gameOverScore = document.querySelector('.game-over-score');
 
 // Initialize layout
-resetGame();
+platformImage.onload = function () {
+    platformPattern = ctx.createPattern(platformImage, "repeat");
+    resetGame(); // Ensure it draws after the pattern is set
+}
 
 // Resets game variables and layouts but does not start the game (game starts on keypress)
 function resetGame() {
@@ -76,7 +84,7 @@ function resetGame() {
 
     // The first platform is always the same
     // x + w has to match paddingX
-    platforms = [{ x: 50, w: 50 }];
+    platforms = [{ x: 50, w: 80 }];
     generatePlatform();
     generatePlatform();
     generatePlatform();
@@ -92,7 +100,7 @@ function resetGame() {
 function generatePlatform() {
     const minimumGap = 40;
     const maximumGap = 200;
-    const minimumWidth = 20;
+    const minimumWidth = 25;
     const maximumWidth = 100;
 
     // X coordinate of the right edge of the furthest platform
@@ -310,9 +318,14 @@ function draw() {
 
 
 function drawPlatforms() {
+    if (platformPattern === null) {
+        console.warn("Platform pattern not loaded yet.");
+        return; // Prevents drawing if the pattern isn't ready
+    }
+
     platforms.forEach(({ x, w }) => {
-        // Draw platform with only the top corners rounded.
-        ctx.fillStyle = "grey";
+        ctx.fillStyle = platformPattern; // Use the pattern when available
+
         drawRoundedTopRect(
             x,
             canvasHeight - platformHeight,
@@ -325,7 +338,7 @@ function drawPlatforms() {
             // Compute the center of the perfect area.
             const centerX = x + w / 2;
             const centerY = canvasHeight - platformHeight + perfectAreaSize / 2;
-            drawChristianCross(centerX, centerY, perfectAreaSize, "black");
+            drawChristianCross(centerX, centerY, perfectAreaSize, "white");
         }
 
     });
