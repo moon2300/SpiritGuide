@@ -19,12 +19,15 @@
 
 
 <div class="game-over-overlay">
+
     <div class="game-over-container">
+        <div class="indhold">
         <h2>Game Over!</h2>
         <p>Your score: <span class="game-over-score"></span></p>
         <input type="text" class="submit-name-input" placeholder="Enter your name" />
         <br /><br />
         <button class="submit-button">Submit Score</button>
+    </div>
 
     </div>
 </div>
