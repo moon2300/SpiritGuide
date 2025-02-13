@@ -11,13 +11,35 @@ body {
 
 
 
+#start{
+    display: flex;
+    border: darkred;
+    width: 300px;
+    align-items: center;
+    justify-content: center;
+    background-color: darkred;
+    border-radius: 10px;
+    padding: 20px 40px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 300ms ease-in-out;
+}
 
+#start:hover{
+    background-color: black;
+}
 .game-over-overlay.hidden {
     display: none;
     pointer-events: none;
 }
 
-
+.start-overlay.hidden {
+    display: none;
+    pointer-events: none;
+}
 
 .container {
     display: flex;
@@ -27,8 +49,19 @@ body {
 }
 .indhold{
     display: flex;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
     flex-direction: column;
+    padding: 50px;
+    width: 400px;
+    height: 600px;
+}
+
+input{
+    border-radius: 10px;
+    padding: 16px 32px;
+    font-size: 20px;
+
 }
 .game-over-overlay{
     display:none;
@@ -44,21 +77,60 @@ body {
 }
 
 .game-over-container{
+    width: 500px;
+    height: 700px;
     background: white;
-    padding: 300px;
     border-radius: 5px;
-    text-align:center;
-    justify-content: flex-start;
+   align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.start-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.start-container {
+    width: 500px;
+    height: 700px;
+    background: white;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.start-indhold{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 50px;
+    width: 400px;
+    height: 600px;
 }
 
 .submit-button {
     display: flex;
+    border: darkred;
+    width: 300px;
     align-items: center;
     justify-content: center;
     background-color: darkred;
     border-radius: 10px;
-    padding: 16px 32px;
-    color: white ;
+    padding: 20px 40px;
+    color: white;
     font-size: 16px;
     font-weight: bold;
     text-transform: uppercase;
