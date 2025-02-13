@@ -27,7 +27,7 @@ let gameRunning = true;
 const canvasWidth = 375;
 const canvasHeight = 375;
 const platformHeight = 100;
-const heroDistanceFromEdge = 10; // While waiting
+const heroDistanceFromEdge = 25; // While waiting
 const paddingX = 100; // The waiting position of the hero in from the original canvas size
 const perfectAreaSize = 25;
 
