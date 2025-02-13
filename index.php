@@ -25,7 +25,7 @@
         <input type="text" class="submit-name-input" placeholder="Enter your name" />
         <br /><br />
         <button class="submit-button">Submit Score</button>
-        <button class="exit-button">Restart Game</button>
+
     </div>
 </div>
 
