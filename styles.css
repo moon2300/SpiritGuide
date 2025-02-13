@@ -15,7 +15,11 @@ body {
     align-items: center;
     height: 100%;
 }
-
+.indhold{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+}
 .game-over-overlay{
     display:none;
     position:fixed;
@@ -31,18 +35,30 @@ body {
 
 .game-over-container{
     background: white;
-    padding: 20px;
+    padding: 300px;
     border-radius: 5px;
     text-align:center;
+    justify-content: flex-start;
 }
 
-.submit-button{
-
+.submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: darkred;
+    border-radius: 10px;
+    padding: 16px 32px;
+    color: white ;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 300ms ease-in-out;
+}
+.submit-button:hover {
+    background-color: black;
 }
 
-.exit-button{
-
-}
 
 #score {
     position: absolute;
