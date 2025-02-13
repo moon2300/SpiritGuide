@@ -9,6 +9,17 @@
 
 </head>
 <body>
+
+<div class="start-overlay">
+    <div class="start-container">
+        <div class="start-indhold">
+            <button id="start">Start</button>
+            <br />
+            <iframe src="https://highscores.martindilling.com/games/23/embed?" title="Highscore table for Spirit Guide" width="100%" height="100%"></iframe>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div id="score"></div>
     <canvas id="game" width="375" height="375"></canvas>
@@ -19,12 +30,18 @@
 
 
 <div class="game-over-overlay">
+
     <div class="game-over-container">
+        <div class="indhold">
         <h2>Game Over!</h2>
         <p>Your score: <span class="game-over-score"></span></p>
         <input type="text" class="submit-name-input" placeholder="Enter your name" />
-        <br /><br />
+        <br />
         <button class="submit-button">Submit Score</button>
+            <br>
+
+    </div>
+
 
     </div>
 </div>
