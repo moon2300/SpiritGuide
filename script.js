@@ -22,7 +22,7 @@ let sceneOffset; // Moves the whole game
 let platforms = [];
 let sticks = [];
 let score = 0;
-let gameRunning = true;
+let gameRunning = false;
 
 const canvasWidth = 375;
 const canvasHeight = 375;
@@ -52,33 +52,33 @@ const perfectElement = document.getElementById("perfect");
 const restartButton = document.getElementById("restart");
 const scoreElement = document.getElementById("score");
 
+const startOverlay= document.querySelector('.start-overlay');
+const startButton = document.querySelector('#start')
+
 const gameOverOverlay = document.querySelector('.game-over-overlay');
 const nameInput = document.querySelector('.submit-name-input');
 const submitButton = document.querySelector('.submit-button');
-const exitButton = document.querySelector('.exit-button');
 const gameOverScore = document.querySelector('.game-over-score');
+
 
 // Initialize layout
 resetGame();
 
 // Resets game variables and layouts but does not start the game (game starts on keypress)
+// --- Game Functions ---
 function resetGame() {
-    // Reset game progress
     phase = "waiting";
     lastTimestamp = undefined;
     sceneOffset = 0;
     score = 0;
-
-    gameRunning = true
-
+    gameRunning = true;
 
     introductionElement.style.opacity = 1;
     perfectElement.style.opacity = 0;
     restartButton.style.display = "none";
     scoreElement.innerText = score;
 
-    // The first platform is always the same
-    // x + w has to match paddingX
+    // Set up initial platform and game objects
     platforms = [{ x: 50, w: 80 }];
     generatePlatform();
     generatePlatform();
@@ -98,33 +98,92 @@ function generatePlatform() {
     const minimumWidth = 25;
     const maximumWidth = 100;
 
-    // X coordinate of the right edge of the furthest platform
     const lastPlatform = platforms[platforms.length - 1];
     let furthestX = lastPlatform.x + lastPlatform.w;
 
-    const x =
-        furthestX +
-        minimumGap +
-        Math.floor(Math.random() * (maximumGap - minimumGap));
-    const w =
-        minimumWidth + Math.floor(Math.random() * (maximumWidth - minimumWidth));
-
+    const x = furthestX + minimumGap + Math.floor(Math.random() * (maximumGap - minimumGap));
+    const w = minimumWidth + Math.floor(Math.random() * (maximumWidth - minimumWidth));
     platforms.push({ x, w });
 }
 
-// If space was pressed restart the game
-window.addEventListener("keydown", function (event) {
-    if (event.key == " ") {
-        event.preventDefault();
-        resetGame();
+function animate(timestamp) {
+    if (!gameRunning) return;
+    if (!lastTimestamp) {
+        lastTimestamp = timestamp;
+        window.requestAnimationFrame(animate);
         return;
     }
+    // Animation phases: stretching, turning, walking, etc.
+    switch (phase) {
+        case "waiting":
+            return;
+        case "stretching":
+            sticks.last().length += (timestamp - lastTimestamp) / stretchingSpeed;
+            break;
+        // ... (Other phases code here)
+    }
+    draw();
+    lastTimestamp = timestamp;
+    window.requestAnimationFrame(animate);
+}
+
+function draw() {
+    ctx.save();
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    // Center canvas drawing and draw your game objects
+    ctx.translate((window.innerWidth - canvasWidth) / 2 - sceneOffset, (window.innerHeight - canvasHeight) / 2);
+    drawPlatforms();
+    // drawHero();
+    drawSticks();
+    ctx.restore();
+}
+
+function drawPlatforms() {
+    platforms.forEach(({ x, w }) => {
+        ctx.fillStyle = "grey";
+        drawRoundedTopRect(x, canvasHeight - platformHeight, w, platformHeight + (window.innerHeight - canvasHeight) / 2, 10);
+    });
+}
+
+function drawRoundedTopRect(x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + radius);
+    ctx.arcTo(x, y, x + radius, y, radius);
+    ctx.lineTo(x + width - radius, y);
+    ctx.arcTo(x + width, y, x + width, y + radius, radius);
+    ctx.lineTo(x + width, y + height);
+    ctx.lineTo(x, y + height);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawSticks() {
+    sticks.forEach((stick) => {
+        ctx.save();
+        ctx.translate(stick.x, canvasHeight - platformHeight);
+        ctx.rotate((Math.PI / 180) * stick.rotation);
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -stick.length);
+        ctx.stroke();
+        ctx.restore();
+    });
+}
+
+// --- Start Button Setup ---
+startButton.addEventListener('click', () => {
+    // Hide the start overlay
+    startOverlay.style.display = "none";
+    // Reset and start the game
+    resetGame();
+    gameRunning = true;
+    window.requestAnimationFrame(animate);
 });
 
-// KNAPPER OG DERES ROLLER ----------------------------------------------------------------------------------------
-window.addEventListener("mousedown", function (event) {
-    console.log("mousedown detected, phase:", phase);
-    if (phase == "waiting") {
+// --- Additional Event Listeners ---
+window.addEventListener("mousedown", (event) => {
+    if (phase === "waiting") {
         lastTimestamp = undefined;
         introductionElement.style.opacity = 0;
         phase = "stretching";
@@ -132,13 +191,13 @@ window.addEventListener("mousedown", function (event) {
     }
 });
 
-window.addEventListener("mouseup", function (event) {
-    if (phase == "stretching") {
+window.addEventListener("mouseup", (event) => {
+    if (phase === "stretching") {
         phase = "turning";
     }
 });
 
-window.addEventListener("resize", function (event) {
+window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     draw();
@@ -151,11 +210,16 @@ window.requestAnimationFrame(animate);
 // Set up event listeners for the buttons in the overlay:
 submitButton.addEventListener('click', (e) => {
     e.preventDefault();
+    // Optionally hide the game over overlay first
     gameOverOverlay.style.display = "none";
-    resetGame();
-    submitScore( nameInput.value, score);
-    gameRunning = true;
+    // Send the score (you can let the fetch complete or not)
+    submitScore(nameInput.value, score);
+    // Refresh the page after a brief delay (or immediately)
+    setTimeout(() => {
+        window.location.reload();
+    }, 500);
 });
+
 
 
 
@@ -476,54 +540,6 @@ function drawHero() {
 
 }
 
-function drawGhost(x, y, size) {
-    ctx.fillStyle = "white";
-
-    // Ghost body (symmetric version)
-    ctx.beginPath();
-    // Start at the top center of the ghost’s head
-    ctx.moveTo(x, y - size * 1.5);
-    // Draw the left side of the ghost
-    ctx.quadraticCurveTo(x - size, y - size * 1.5, x - size * 0.8, y + size * 0.5);
-    // Create the left bottom “wave” of the ghost’s skirt
-    ctx.quadraticCurveTo(x - size * 0.6, y + size * 0.9, x - size * 0.3, y + size * 0.8);
-    // Form the bottom dip/center of the ghost
-    ctx.quadraticCurveTo(x, y + size * 1.1, x + size * 0.3, y + size * 0.8);
-    // Mirror the left bottom wave on the right side
-    ctx.quadraticCurveTo(x + size * 0.6, y + size * 0.9, x + size * 0.8, y + size * 0.5);
-    // Draw the right side up back to the top center
-    ctx.quadraticCurveTo(x + size, y - size * 1.5, x, y - size * 1.5);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Eyes
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(x - size * 0.3, y - size * 0.7, size * 0.15, 0, Math.PI * 2);
-    ctx.arc(x + size * 0.3, y - size * 0.7, size * 0.15, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Eye highlights
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(x - size * 0.25, y - size * 0.75, size * 0.05, 0, Math.PI * 2);
-    ctx.arc(x + size * 0.35, y - size * 0.75, size * 0.05, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Cheeks
-    ctx.fillStyle = "pink";
-    ctx.beginPath();
-    ctx.arc(x - size * 0.45, y - size * 0.5, size * 0.1, 0, Math.PI * 2);
-    ctx.arc(x + size * 0.45, y - size * 0.5, size * 0.1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Mouth
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(x, y - size * 0.4, size * 0.1, 0, Math.PI, false);
-    ctx.fill();
-}
 
 function drawSticks() {
     sticks.forEach((stick) => {
@@ -573,6 +589,19 @@ function disableButtonsTemporarily() {
     }, 1500); // Delay (in milliseconds)
 }
 
+// When the start button is clicked, hide the overlay and start the game
+startButton.addEventListener('click', () => {
+    // Hide the start overlay
+    startOverlay.style.display = "none";
+
+    // Reset game variables (if needed)
+    resetGame();
+
+    // Set gameRunning to true and start the animation loop
+    gameRunning = true;
+    window.requestAnimationFrame(animate);
+});
+
 // This function is called when the game is over:
 function endGame() {
     gameRunning = false;  // Stop the animation loop
@@ -581,6 +610,8 @@ function endGame() {
     disableButtonsTemporarily();
     initializeNameInput();
 }
+
+
 
 // Submit the score to your server (adjust the URL and logic as needed)
 function submitScore(player, score) {
