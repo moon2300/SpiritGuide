@@ -41,7 +41,7 @@ if (empty($player) || strlen($player) < 2 || strlen($player) > 50) {
 
 //validate score
 $score = (int) $data['score'];
-if ($score <= 0) {
+if ($score < 0) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
@@ -52,7 +52,7 @@ if ($score <= 0) {
 }
 
 //send score to Highscore api
-$url = 'https://highscores.martindilling.com/api/v1/games/12/highscores';
+$url = 'https://highscores.martindilling.com/api/v1/games/23/highscores';
 $payload = [
     'player' => $player,
     'score' => $score,

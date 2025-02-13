@@ -71,6 +71,7 @@ function resetGame() {
 
     gameRunning = true
 
+
     introductionElement.style.opacity = 1;
     perfectElement.style.opacity = 0;
     restartButton.style.display = "none";
@@ -152,7 +153,7 @@ submitButton.addEventListener('click', (e) => {
     e.preventDefault();
     gameOverOverlay.style.display = "none";
     resetGame();
-    submitScore();
+    submitScore( nameInput.value, score);
     gameRunning = true;
 });
 
@@ -569,7 +570,7 @@ function disableButtonsTemporarily() {
 
     setTimeout(() => {
         submitButton.removeAttribute('disabled');
-    }, 3000); // Delay (in milliseconds)
+    }, 1500); // Delay (in milliseconds)
 }
 
 // This function is called when the game is over:
@@ -582,20 +583,27 @@ function endGame() {
 }
 
 // Submit the score to your server (adjust the URL and logic as needed)
-function submitScore() {
-    fetch('/', {
-        method: 'POST',
-        body: JSON.stringify({
-            player: UI.nameInput.value,
-            score: Game.calculateScore(),
-        }),
-    })
-        .then((response) => {
-            if (!response.ok) throw new Error('Failed to submit score');
+function submitScore(player, score) {
+    fetch(
+        'submit-highscore.php',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                player: player,
+                score: score,
+            }),
+        }
+    )
+        .then(function (response) {
             return response.json();
         })
-        .then(() => (window.location.href = '/?page=highscore'))
-        .catch((error) => {
+        .then(function (data) {
+            console.log(data);
+        })
+        .catch(function (error){
             console.error(error);
         });
 }
