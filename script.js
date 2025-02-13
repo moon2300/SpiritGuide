@@ -19,6 +19,8 @@ let heroX; // Changes when moving forward
 let heroY; // Only changes when falling
 let sceneOffset; // Moves the whole game
 
+let platformPattern = null;
+
 let platforms = [];
 let sticks = [];
 let score = 0;
@@ -41,6 +43,9 @@ const fallingSpeed = 2;
 const heroWidth = 17; // 24
 const heroHeight = 30; // 40
 
+const platformImage = new Image();
+platformImage.src = "texture3.png"; // Make sure the image path is correct
+
 const canvas = document.getElementById("game");
 canvas.width = window.innerWidth; // Make the Canvas full screen
 canvas.height = window.innerHeight;
@@ -62,7 +67,10 @@ const gameOverScore = document.querySelector('.game-over-score');
 
 
 // Initialize layout
-resetGame();
+platformImage.onload = function () {
+    platformPattern = ctx.createPattern(platformImage, "repeat");
+    resetGame(); // Ensure it draws after the pattern is set
+}
 
 // Resets game variables and layouts but does not start the game (game starts on keypress)
 // --- Game Functions ---
@@ -78,7 +86,8 @@ function resetGame() {
     restartButton.style.display = "none";
     scoreElement.innerText = score;
 
-    // Set up initial platform and game objects
+    // The first platform is always the same
+    // x + w has to match paddingX
     platforms = [{ x: 50, w: 80 }];
     generatePlatform();
     generatePlatform();
@@ -375,9 +384,14 @@ function draw() {
 
 
 function drawPlatforms() {
+    if (platformPattern === null) {
+        console.warn("Platform pattern not loaded yet.");
+        return; // Prevents drawing if the pattern isn't ready
+    }
+
     platforms.forEach(({ x, w }) => {
-        // Draw platform with only the top corners rounded.
-        ctx.fillStyle = "grey";
+        ctx.fillStyle = platformPattern; // Use the pattern when available
+
         drawRoundedTopRect(
             x,
             canvasHeight - platformHeight,
@@ -390,7 +404,7 @@ function drawPlatforms() {
             // Compute the center of the perfect area.
             const centerX = x + w / 2;
             const centerY = canvasHeight - platformHeight + perfectAreaSize / 2;
-            drawChristianCross(centerX, centerY, perfectAreaSize, "black");
+            drawChristianCross(centerX, centerY, perfectAreaSize, "white");
         }
 
     });
