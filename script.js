@@ -1,5 +1,5 @@
 
-
+// SKAL HUSKE AT SPØRGE HVAD DET HER ER -----------------------------------------------------
 // Extend the base functionality of JavaScript
 Array.prototype.last = function () {
     return this[this.length - 1];
@@ -9,6 +9,7 @@ Array.prototype.last = function () {
 Math.sinus = function (degree) {
     return Math.sin((degree / 180) * Math.PI);
 };
+// -------------------------------------------------------------------------------------------
 
 // Game data
 let phase = "waiting"; // waiting | stretching | turning | walking | transitioning | falling
@@ -143,28 +144,19 @@ window.requestAnimationFrame(animate);
 
 
 // RESTART KNAP
-restartButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    resetGame();
-    restartButton.style.display = "none";
-    gameRunning = true; // Restart the animation loop
-    window.requestAnimationFrame(animate);
-});
+
 
 // Set up event listeners for the buttons in the overlay:
 submitButton.addEventListener('click', (e) => {
     e.preventDefault();
-    submitScore();
-});
-
-exitButton.addEventListener('click', (e) => {
-    e.preventDefault();
     gameOverOverlay.style.display = "none";
-    // Restart the game when the player clicks “Restart Game”
     resetGame();
+    submitScore();
     gameRunning = true;
     window.requestAnimationFrame(animate);
 });
+
+
 
 // ANIMATION -----------------------------------------------------------------------------------------------------
 // The main game loop
@@ -573,11 +565,10 @@ function initializeNameInput() {
 // Temporarily disable the submit and exit buttons to prevent spamming
 function disableButtonsTemporarily() {
     submitButton.setAttribute('disabled', 'true');
-    exitButton.setAttribute('disabled', 'true');
+
 
     setTimeout(() => {
         submitButton.removeAttribute('disabled');
-        exitButton.removeAttribute('disabled');
     }, 3000); // Delay (in milliseconds)
 }
 
