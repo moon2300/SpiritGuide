@@ -75,7 +75,6 @@ function resetGame() {
 
     introductionElement.style.opacity = 1;
     perfectElement.style.opacity = 0;
-    restartButton.style.display = "none";
     scoreElement.innerText = score;
 
     // Set up initial platform and game objects
@@ -220,7 +219,12 @@ submitButton.addEventListener('click', (e) => {
     }, 500);
 });
 
-
+restartButton.addEventListener('click', (e) => {
+    resetGame();
+    gameOverOverlay.style.display = "none";
+    gameRunning = true;
+    window.requestAnimationFrame(animate);
+});
 
 
 // ANIMATION -----------------------------------------------------------------------------------------------------
@@ -614,6 +618,7 @@ function endGame() {
 
 
 // Submit the score to your server (adjust the URL and logic as needed)
+
 function submitScore(player, score) {
     fetch(
         'submit-highscore.php',
