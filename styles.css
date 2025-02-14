@@ -151,29 +151,43 @@ input{
 }
 
 #introduction {
-    width: 200px;
-    height: 150px;
     position: absolute;
-    font-weight: 600;
-    font-size: 0.8em;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    width: 300px;
+    align-items: center;
+    border-radius: 10px;
+    padding: 20px 40px;
+    color: darkred;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
     text-align: center;
-    transition: opacity 2s;
+
+}
+
+p{
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
 }
 
 #restart {
-    width: 120px;
-    height: 120px;
-    position: absolute;
-    border-radius: 50%;
+    display: flex;
+    border: darkred;
+    width: 300px;
+    align-items: center;
+    justify-content: center;
+    background-color: darkred;
+    border-radius: 10px;
+    padding: 20px 40px;
     color: white;
-    background-color: red;
-    border: none;
-    font-weight: 700;
-    font-size: 1.2em;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    display: none;
-    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 300ms ease-in-out;
 }
 
 #perfect {

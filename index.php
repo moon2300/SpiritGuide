@@ -25,7 +25,6 @@
     <canvas id="game" width="375" height="375"></canvas>
     <div id="introduction">Hold down the mouse to stretch out a stick</div>
     <div id="perfect">DOUBLE SCORE</div>
-    <button id="restart">RESTART</button>
 </div>
 
 
@@ -38,8 +37,9 @@
         <input type="text" class="submit-name-input" placeholder="Enter your name" />
         <br />
         <button class="submit-button">Submit Score</button>
-            <br>
+            <p>or</p>
 
+            <button id="restart">RESTART</button>
     </div>
 
 
