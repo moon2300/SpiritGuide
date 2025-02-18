@@ -11,11 +11,18 @@
 <body>
 
 <div class="start-overlay">
+
     <div class="start-container">
+
         <div class="start-indhold">
-            <button id="start">Start</button>
+            <img src="piczz/Ghost.svg" id="ghost" alt="Ghost character">
             <br />
-            <iframe src="https://highscores.martindilling.com/games/23/embed?" title="Highscore table for Spirit Guide" width="100%" height="100%"></iframe>
+            <div class="start-button">
+            <button id="start">Start</button>
+            </div>
+            <div class="score-board">
+                <iframe src="https://highscores.martindilling.com/games/43/embed?" title="Highscore table for Spirit Guide" width="100%" height="100%"></iframe>
+            </div>
         </div>
     </div>
 </div>
@@ -42,8 +49,9 @@
             <button id="restart">RESTART</button>
     </div>
 
-
     </div>
+
+
 </div>
 
 

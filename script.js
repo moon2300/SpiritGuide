@@ -221,7 +221,9 @@ submitButton.addEventListener('click', (e) => {
     // Optionally hide the game over overlay first
     gameOverOverlay.style.display = "none";
     // Send the score (you can let the fetch complete or not)
-    submitScore(nameInput.value, score);
+
+  submitScore(nameInput.value, score);
+
     // Refresh the page after a brief delay (or immediately)
     setTimeout(() => {
         window.location.reload();
@@ -646,6 +648,8 @@ function submitScore(player, score) {
                 score: score,
             }),
         }
+
+
     )
         .then(function (response) {
             return response.json();
