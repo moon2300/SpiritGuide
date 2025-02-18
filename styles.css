@@ -47,6 +47,19 @@ body {
     align-items: center;
     height: 100%;
 }
+
+.start-indhold{
+display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.start-button{
+    display: flex;
+    width: 200px;
+
+}
+
 .indhold{
     display: flex;
     align-items: center;
@@ -100,8 +113,8 @@ input{
 }
 
 .start-container {
-    width: 500px;
-    height: 700px;
+    width: 800px;
+    height: 500px;
     background: white;
     border-radius: 5px;
     display: flex;
@@ -110,15 +123,18 @@ input{
     justify-content: center;
 }
 
+#ghost{
+    display: flex;
+    align-self: center;
+height: 250px;
+}
 
 .start-indhold{
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
     padding: 50px;
-    width: 400px;
-    height: 600px;
+    width: 700px;
+    height: 500px;
 }
 
 .submit-button {
@@ -150,6 +166,7 @@ input{
     font-weight: 900;
 }
 
+
 #introduction {
     position: absolute;
     width: 300px;
@@ -165,6 +182,7 @@ input{
 
 }
 
+
 p{
     color: black;
     font-size: 16px;
@@ -172,6 +190,7 @@ p{
     text-transform: uppercase;
     text-align: center;
 }
+
 
 #restart {
     display: flex;
