@@ -18,19 +18,22 @@
             <img src="piczz/Ghost.svg" id="ghost" alt="Ghost character">
             <br />
             <div class="start-button">
-            <button id="start">Start</button>
+                <h2>Hold down the mouse to stretch the stick</h2>
+                <img class="mus-gif" src="piczz/fabacc95e84c8d7e39667972aad1ed83.gif" alt="">
+
             </div>
             <div class="score-board">
                 <iframe src="https://highscores.martindilling.com/games/43/embed?" title="Highscore table for Spirit Guide" width="100%" height="100%"></iframe>
             </div>
         </div>
+        <button id="start">Start</button>
     </div>
 </div>
 
 <div class="container">
     <div id="score"></div>
     <canvas id="game" width="375" height="375"></canvas>
-    <div id="introduction">Hold down the mouse to stretch out a stick</div>
+    <div id="introduction"></div>
     <div id="perfect">DOUBLE SCORE</div>
 </div>
 

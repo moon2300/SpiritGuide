@@ -34,6 +34,7 @@ function apiCall(string $method, string $url, ?array $payload = null): array
         exit;
     }
 
+
     // Check if the response code indicates an error.
     // 4xx and 5xx are client errors and server errors.
     // Not a pretty way to handle errors, but will do for now.

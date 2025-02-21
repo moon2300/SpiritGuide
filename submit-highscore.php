@@ -41,7 +41,7 @@ if (empty($player) || strlen($player) < 2 || strlen($player) > 50) {
 
 //validate score
 $score = (int) $data['score'];
-if ($score < 0) {
+if ($score < 1) {
     http_response_code(400);
     echo json_encode([
         'status' => 'error',
