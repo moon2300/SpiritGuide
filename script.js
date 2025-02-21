@@ -20,9 +20,12 @@ let heroY; // Only changes when falling
 let sceneOffset; // Moves the whole game
 
 let platformPattern = null;
+let hellPattern = null;
+let flamesPattern = null;
 
 let platforms = [];
 let sticks = [];
+let trees = [];
 let score = 0;
 let gameRunning = false;
 
@@ -34,6 +37,24 @@ const paddingX = 100; // The waiting position of the hero in from the original c
 const perfectAreaSize = 25;
 
 
+// The background moves slower than the hero
+const backgroundSpeedMultiplier = 0.2;
+
+const hill1BaseHeight = 475;
+const hill1Amplitude = 10;
+const hill1Stretch = 1;
+const hill2BaseHeight = 375;
+const hill2Amplitude = 20;
+const hill2Stretch = 0.5;
+
+const hellBaseHeight = 270;
+
+const flamesBaseHeight = 200
+
+const grassBaseHeight = 290;
+const grassAmplitude = 25;
+const grassStretch = 150;
+
 const stretchingSpeed = 4; // Milliseconds it takes to draw a pixel
 const turningSpeed = 4; // Milliseconds it takes to turn a degree
 const walkingSpeed = 4;
@@ -42,6 +63,12 @@ const fallingSpeed = 2;
 
 const heroWidth = 17; // 24
 const heroHeight = 30; // 40
+
+const flamesImage = new Image();
+flamesImage.src = "flames.png";
+
+const hellImage = new Image();
+hellImage.src = "dirtS.jpg";
 
 const platformImage = new Image();
 platformImage.src = "texture3.png"; // Make sure the image path is correct
@@ -67,6 +94,15 @@ const gameOverScore = document.querySelector('.game-over-score');
 
 
 // Initialize layout
+flamesImage.onload = function () {
+    let scaleFactor = 0.2; // Adjust as needed
+    flamesPattern = createResizedPattern(flamesImage, scaleFactor);
+}
+
+hellImage.onload = function () {
+    let hellScaleFactor = 0.9; // Adjust as needed
+    hellPattern = createResizedPattern(hellImage, hellScaleFactor);;
+}
 platformImage.onload = function () {
     platformPattern = ctx.createPattern(platformImage, "repeat");
     resetGame(); // Ensure it draws after the pattern is set
@@ -94,10 +130,42 @@ function resetGame() {
     generatePlatform();
 
     sticks = [{ x: platforms[0].x + platforms[0].w, length: 0, rotation: 0 }];
+
+    trees = [];
+    generateTree();
+    generateTree();
+    generateTree();
+    generateTree();
+    generateTree();
+    generateTree();
+    generateTree();
+    generateTree();
+    generateTree();
+    generateTree();
+
     heroX = platforms[0].x + platforms[0].w - heroDistanceFromEdge;
     heroY = 0;
 
     draw();
+}
+
+function generateTree() {
+    const minimumGap = 30;
+    const maximumGap = 150;
+
+    // X coordinate of the right edge of the furthest tree
+    const lastTree = trees[trees.length - 1];
+    let furthestX = lastTree ? lastTree.x : 0;
+
+    const x =
+        furthestX +
+        minimumGap +
+        Math.floor(Math.random() * (maximumGap - minimumGap));
+
+    const treeColors = ["#6D8821", "#8FAC34", "#98B333"];
+    const color = treeColors[Math.floor(Math.random() * 3)];
+
+    trees.push({ x, color });
 }
 
 function generatePlatform() {
@@ -109,87 +177,18 @@ function generatePlatform() {
     const lastPlatform = platforms[platforms.length - 1];
     let furthestX = lastPlatform.x + lastPlatform.w;
 
-    const x = furthestX + minimumGap + Math.floor(Math.random() * (maximumGap - minimumGap));
-    const w = minimumWidth + Math.floor(Math.random() * (maximumWidth - minimumWidth));
+    const x =
+    furthestX +
+    minimumGap +
+    Math.floor(Math.random() * (maximumGap - minimumGap));
+    const w =
+    minimumWidth + Math.floor(Math.random() * (maximumWidth - minimumWidth));
+
     platforms.push({ x, w });
 }
 
-function animate(timestamp) {
-    if (!gameRunning) return;
-    if (!lastTimestamp) {
-        lastTimestamp = timestamp;
-        window.requestAnimationFrame(animate);
-        return;
-    }
-    // Animation phases: stretching, turning, walking, etc.
-    switch (phase) {
-        case "waiting":
-            return;
-        case "stretching":
-            sticks.last().length += (timestamp - lastTimestamp) / stretchingSpeed;
-            break;
-        // ... (Other phases code here)
-    }
-    draw();
-    lastTimestamp = timestamp;
-    window.requestAnimationFrame(animate);
-}
+resetGame();
 
-function draw() {
-    ctx.save();
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    // Center canvas drawing and draw your game objects
-    ctx.translate((window.innerWidth - canvasWidth) / 2 - sceneOffset, (window.innerHeight - canvasHeight) / 2);
-    drawPlatforms();
-    // drawHero();
-    drawSticks();
-    ctx.restore();
-}
-
-function drawPlatforms() {
-    platforms.forEach(({ x, w }) => {
-        ctx.fillStyle = "grey";
-        drawRoundedTopRect(x, canvasHeight - platformHeight, w, platformHeight + (window.innerHeight - canvasHeight) / 2, 10);
-    });
-}
-
-function drawRoundedTopRect(x, y, width, height, radius) {
-    ctx.beginPath();
-    ctx.moveTo(x, y + radius);
-    ctx.arcTo(x, y, x + radius, y, radius);
-    ctx.lineTo(x + width - radius, y);
-    ctx.arcTo(x + width, y, x + width, y + radius, radius);
-    ctx.lineTo(x + width, y + height);
-    ctx.lineTo(x, y + height);
-    ctx.closePath();
-    ctx.fill();
-}
-
-function drawSticks() {
-    sticks.forEach((stick) => {
-        ctx.save();
-        ctx.translate(stick.x, canvasHeight - platformHeight);
-        ctx.rotate((Math.PI / 180) * stick.rotation);
-        ctx.beginPath();
-        ctx.lineWidth = 2;
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, -stick.length);
-        ctx.stroke();
-        ctx.restore();
-    });
-}
-
-// --- Start Button Setup ---
-startButton.addEventListener('click', () => {
-    // Hide the start overlay
-    startOverlay.style.display = "none";
-    // Reset and start the game
-    resetGame();
-    gameRunning = true;
-    window.requestAnimationFrame(animate);
-});
-
-// --- Additional Event Listeners ---
 window.addEventListener("mousedown", (event) => {
     if (phase === "waiting") {
         lastTimestamp = undefined;
@@ -213,32 +212,6 @@ window.addEventListener("resize", () => {
 
 window.requestAnimationFrame(animate);
 
-
-
-// Set up event listeners for the buttons in the overlay:
-submitButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    // Optionally hide the game over overlay first
-    gameOverOverlay.style.display = "none";
-    // Send the score (you can let the fetch complete or not)
-
-  submitScore(nameInput.value, score);
-
-    // Refresh the page after a brief delay (or immediately)
-    setTimeout(() => {
-        window.location.reload();
-    }, 500);
-});
-
-restartButton.addEventListener('click', (e) => {
-    resetGame();
-    gameOverOverlay.style.display = "none";
-    gameRunning = true;
-    window.requestAnimationFrame(animate);
-});
-
-
-// ANIMATION -----------------------------------------------------------------------------------------------------
 // The main game loop
 function animate(timestamp) {
     if (!gameRunning) return;
@@ -274,6 +247,8 @@ function animate(timestamp) {
                     }
 
                     generatePlatform();
+                    generateTree();
+                    generateTree();
 
                 }
 
@@ -336,16 +311,12 @@ function animate(timestamp) {
     }
 
     draw();
-    lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
 
-
+    lastTimestamp = timestamp;
 }
 
-// CANVAS TEGNE ---------------------------------------------------------------------------------------------------
 
-
-// Returns the platform the stick hit (if it didn't hit any stick then return undefined)
 function thePlatformTheStickHits() {
     if (sticks.last().rotation != 90)
         throw Error(`Stick is ${sticks.last().rotation}°`);
@@ -372,14 +343,11 @@ function draw() {
     ctx.save();
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
+    drawBackground();
 
-    // Center main canvas area to the middle of the screen
-    ctx.translate(
-        (window.innerWidth - canvasWidth) / 2 - sceneOffset,
-        (window.innerHeight - canvasHeight) / 2
-    );
+    // Center canvas drawing and draw your game objects
+    ctx.translate((window.innerWidth - canvasWidth) / 2 - sceneOffset, (window.innerHeight - canvasHeight) / 2);
 
-    // Draw scene
     drawPlatforms();
     drawHero();
     drawSticks();
@@ -388,33 +356,12 @@ function draw() {
     ctx.restore();
 }
 
-
-function drawPlatforms() {
-    if (platformPattern === null) {
-        console.warn("Platform pattern not loaded yet.");
-        return; // Prevents drawing if the pattern isn't ready
-    }
-
-    platforms.forEach(({ x, w }) => {
-        ctx.fillStyle = platformPattern; // Use the pattern when available
-
-        drawRoundedTopRect(
-            x,
-            canvasHeight - platformHeight,
-            w,
-            platformHeight + (window.innerHeight - canvasHeight) / 2,
-            10 // Adjust the radius as needed
-        );
-
-        if (sticks.last().x < x) {
-            // Compute the center of the perfect area.
-            const centerX = x + w / 2;
-            const centerY = canvasHeight - platformHeight + perfectAreaSize / 2;
-            drawChristianCross(centerX, centerY, perfectAreaSize, "white");
-        }
-
-    });
-}
+restartButton.addEventListener('click', (e) => {
+    resetGame();
+    gameOverOverlay.style.display = "none";
+    gameRunning = true;
+    window.requestAnimationFrame(animate);
+});
 
 // top radius
 function drawRoundedTopRect(x, y, width, height, radius) {
@@ -463,6 +410,137 @@ function drawChristianCross(cx, cy, size, color) {
     );
 }
 
+function drawPlatforms() {
+    if (platformPattern === null) {
+        console.warn("Platform pattern not loaded yet.");
+        return; // Prevents drawing if the pattern isn't ready
+    }
+    platforms.forEach(({ x, w }) => {
+        ctx.fillStyle = platformPattern; // Use the loaded pattern
+
+        drawRoundedTopRect(
+            x,
+            canvasHeight - platformHeight,
+            w,
+            platformHeight + (window.innerHeight - canvasHeight) / 2,
+            10 // Adjust the radius as needed
+        );
+
+        if (sticks.last().x < x) {
+            // Compute the center of the perfect area.
+            const centerX = x + w / 2;
+            const centerY = canvasHeight - platformHeight + perfectAreaSize / 2;
+            drawChristianCross(centerX, centerY, perfectAreaSize, "white");
+        }
+    });
+}
+
+
+function drawSticks() {
+    sticks.forEach((stick) => {
+        ctx.save();
+        ctx.translate(stick.x, canvasHeight - platformHeight);
+        ctx.rotate((Math.PI / 180) * stick.rotation);
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -stick.length);
+        ctx.stroke();
+        ctx.restore();
+    });
+}
+
+// --- Start Button Setup ---
+startButton.addEventListener('click', () => {
+    // Hide the start overlay
+    startOverlay.style.display = "none";
+    // Reset and start the game
+    resetGame();
+    gameRunning = true;
+    window.requestAnimationFrame(animate);
+});
+
+// --- Additional Event Listeners ---
+
+
+
+
+// Set up event listeners for the buttons in the overlay:
+submitButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    // Optionally hide the game over overlay first
+    gameOverOverlay.style.display = "none";
+    // Send the score (you can let the fetch complete or not)
+
+  submitScore(nameInput.value, score);
+
+    // Refresh the page after a brief delay (or immediately)
+    setTimeout(() => {
+        window.location.reload();
+    }, 500);
+});
+
+
+
+
+// ANIMATION -----------------------------------------------------------------------------------------------------
+
+
+// CANVAS TEGNE ---------------------------------------------------------------------------------------------------
+
+
+// Returns the platform the stick hit (if it didn't hit any stick then return undefined)
+
+
+function draw() {
+    ctx.save();
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    drawBackground();
+
+    // Center main canvas area to the middle of the screen
+    ctx.translate(
+        (window.innerWidth - canvasWidth) / 2 - sceneOffset,
+        (window.innerHeight - canvasHeight) / 2
+    );
+
+    // Draw scene
+    drawPlatforms();
+    drawHero();
+    drawSticks();
+
+    // Restore transformation
+    ctx.restore();
+}
+
+
+function drawPlatforms() {
+    if (platformPattern === null) {
+        console.warn("Platform pattern not loaded yet.");
+        return; // Prevents drawing if the pattern isn't ready
+    }
+
+    platforms.forEach(({ x, w }) => {
+        ctx.fillStyle = platformPattern; // Use the pattern when available
+
+        drawRoundedTopRect(
+            x,
+            canvasHeight - platformHeight,
+            w,
+            platformHeight + (window.innerHeight - canvasHeight) / 2,
+            10 // Adjust the radius as needed
+        );
+
+        if (sticks.last().x < x) {
+            // Compute the center of the perfect area.
+            const centerX = x + w / 2;
+            const centerY = canvasHeight - platformHeight + perfectAreaSize / 2;
+            drawChristianCross(centerX, centerY, perfectAreaSize, "white");
+        }
+
+    });
+}
+
 function drawGhost(x, y, size) {
     ctx.fillStyle = "white";
 
@@ -509,20 +587,6 @@ function drawGhost(x, y, size) {
     ctx.fillStyle = "black";
     ctx.beginPath();
     ctx.arc(x, y - size * 0.4, size * 0.1, 0, Math.PI, false);
-    ctx.fill();
-}
-
-function drawRoundedRect(x, y, width, height, radius) {
-    ctx.beginPath();
-    ctx.moveTo(x, y + radius);
-    ctx.lineTo(x, y + height - radius);
-    ctx.arcTo(x, y + height, x + radius, y + height, radius);
-    ctx.lineTo(x + width - radius, y + height);
-    ctx.arcTo(x + width, y + height, x + width, y + height - radius, radius);
-    ctx.lineTo(x + width, y + radius);
-    ctx.arcTo(x + width, y, x + width - radius, y, radius);
-    ctx.lineTo(x + radius, y);
-    ctx.arcTo(x, y, x, y + radius, radius);
     ctx.fill();
 }
 
@@ -581,6 +645,142 @@ function drawSticks() {
     });
 }
 
+function drawBackground() {
+    // Draw sky
+    var gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
+    gradient.addColorStop(0, "#87CEEB");
+    gradient.addColorStop(1, "#FEF1E1");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+    // Draw hills
+    drawHill(hill1BaseHeight, hill1Amplitude, hill1Stretch, "#95C629FF");
+    drawHill(hill2BaseHeight, hill2Amplitude, hill2Stretch, "#659F1C");
+
+    drawGrass(grassBaseHeight, grassAmplitude, grassStretch, "#334a14");
+
+    drawHell();
+    drawFlames();
+
+    // Draw trees
+    trees.forEach((tree) => drawTree(tree.x, tree.color));
+}
+
+
+
+// A hill is a shape under a stretched out sinus wave
+function drawHill(baseHeight, amplitude, stretch, color) {
+    const groundY = window.innerHeight - hellBaseHeight;
+    ctx.beginPath();
+    ctx.moveTo(0, groundY);
+    ctx.lineTo(0, getHillY(0, baseHeight, amplitude, stretch));
+    for (let i = 0; i < window.innerWidth; i++) {
+        ctx.lineTo(i, getHillY(i, baseHeight, amplitude, stretch));
+    }
+    ctx.lineTo(window.innerWidth, groundY);
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+function drawGrass (baseHeight, amplitude, stretch, color) {
+    ctx.beginPath();
+    ctx.moveTo(0, window.innerHeight);
+    ctx.lineTo(0, getHillY(0, baseHeight, amplitude, stretch));
+    for (let i = 0; i < window.innerWidth; i++) {
+        ctx.lineTo(i, getHillY(i, baseHeight, amplitude, stretch));
+    }
+    ctx.lineTo(window.innerWidth, window.innerHeight);
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+function createResizedPattern(image, scaleFactor, repetition = "repeat") {
+    // Create an offscreen canvas with the new scaled dimensions
+    const offscreen = document.createElement("canvas");
+    offscreen.width = image.width * scaleFactor;
+    offscreen.height = image.height * scaleFactor;
+    const offCtx = offscreen.getContext("2d");
+
+    // Draw the image scaled down
+    offCtx.drawImage(image, 0, 0, offscreen.width, offscreen.height);
+
+    // Create and return the pattern
+    return ctx.createPattern(offscreen, repetition);
+}
+
+function drawHell () {
+    if (hellPattern === null) {
+        console.warn("Hell pattern not loaded yet.");
+        return; // Prevents drawing if the pattern isn't ready
+    }
+
+    let hellScaleFactor = 0.5;
+    let matrix = new DOMMatrix().scale(hellScaleFactor, hellScaleFactor);
+    hellPattern.setTransform(matrix);
+    ctx.fillStyle = hellPattern; // Use the loaded pattern
+    ctx.fillRect(0, window.innerHeight - hellBaseHeight, window.innerWidth, hellBaseHeight);
+}
+
+
+
+function drawFlames () {
+    if (flamesPattern === null) {
+        console.warn("Hell pattern not loaded yet.");
+        return; // Prevents drawing if the pattern isn't ready
+    }
+    let scaleFactor = 1;
+    let matrix = new DOMMatrix().scale(scaleFactor, scaleFactor);
+    flamesPattern.setTransform(matrix);
+    ctx.fillStyle = flamesPattern; // Use the loaded pattern
+    ctx.fillRect(0, window.innerHeight - flamesBaseHeight, window.innerWidth, flamesBaseHeight);
+}
+
+function drawTree(x, color) {
+    ctx.save();
+    ctx.translate(
+        (-sceneOffset * backgroundSpeedMultiplier + x) * hill1Stretch,
+        getTreeY(x, hill1BaseHeight, hill1Amplitude)
+    );
+
+    const treeTrunkHeight = 5;
+    const treeTrunkWidth = 2;
+    const treeCrownHeight = 25;
+    const treeCrownWidth = 10;
+
+    // Draw trunk
+    ctx.fillStyle = "#7D833C";
+    ctx.fillRect(
+        -treeTrunkWidth / 2,
+        -treeTrunkHeight,
+        treeTrunkWidth,
+        treeTrunkHeight
+    );
+
+    // Draw crown
+    ctx.beginPath();
+    ctx.moveTo(-treeCrownWidth / 2, -treeTrunkHeight);
+    ctx.lineTo(0, -(treeTrunkHeight + treeCrownHeight));
+    ctx.lineTo(treeCrownWidth / 2, -treeTrunkHeight);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    ctx.restore();
+}
+
+function getHillY(windowX, baseHeight, amplitude, stretch) {
+    const sineBaseY = window.innerHeight - baseHeight;
+    return (
+        Math.sinus((sceneOffset * backgroundSpeedMultiplier + windowX) * stretch) *
+        amplitude +
+        sineBaseY
+    );
+}
+
+
+
+function getTreeY(x, baseHeight, amplitude) {
+    const sineBaseY = window.innerHeight - baseHeight;
+    return Math.sinus(x) * amplitude + sineBaseY;
+}
 
 function randomBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
