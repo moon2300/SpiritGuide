@@ -47,11 +47,12 @@
     const hill2BaseHeight = 375;
     const hill2Amplitude = 20;
     const hill2Stretch = 0.5;
-    const hellBaseHeight = 270;
+    const hellBaseHeight = 240;
     const flamesBaseHeight = 200;
-    const grassBaseHeight = 290;
+    const grassBaseHeight = 230;
     const grassAmplitude = 25;
     const grassStretch = 150;
+
 
     // --- Canvas Setup ---
     const canvas = document.getElementById("game");
@@ -60,8 +61,7 @@
     const ctx = canvas.getContext("2d");
 
     // --- UI Elements ---
-    const restartButton = document.getElementById("restart");
-    const scoreElement = document.getElementById("score");
+    const restartButton = document.getElementById("restart");const scoreElement = document.getElementById("score");
     const startOverlay = document.querySelector('.start-overlay');
     const startButton = document.querySelector('#start');
     const gameOverOverlay = document.querySelector('.game-over-overlay');
@@ -94,8 +94,8 @@
     flamesPattern = createResizedPattern(flamesImage, scaleFactor);
 };
     hellImage.onload = function () {
-    let hellScaleFactor = 1.6; // adjust as needed
-    hellPattern = createResizedPattern(hellImage, hellScaleFactor);
+    let hellScaleFactor = 0.5; // adjust as needed
+    hellPattern = createResizedPattern(hellImage, hellScaleFactor, "repeat-x");
 };
     platformImage.onload = function () {
     platformPattern = ctx.createPattern(platformImage, "repeat");
@@ -257,27 +257,29 @@
 }
 
     function drawBackground() {
-    // Sky gradient
-    const gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
-    gradient.addColorStop(0, "#87CEEB");
-    gradient.addColorStop(1, "#FEF1E1");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+        // Sky gradient.
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, "#87CEEB");
+        gradient.addColorStop(1, "#FEF1E1");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Hills
-    drawHill(hill1BaseHeight, hill1Amplitude, hill1Stretch, "#95C629FF");
-    drawHill(hill2BaseHeight, hill2Amplitude, hill2Stretch, "#659F1C");
+        // Draw hills.
+        drawHill(hill1BaseHeight, hill1Amplitude, hill1Stretch, "#95C629FF");
+        drawHill(hill2BaseHeight, hill2Amplitude, hill2Stretch, "#659F1C");
 
-    // Grass
-    drawGrass(grassBaseHeight, grassAmplitude, grassStretch, "#334a14");
+        // Draw grass that starts exactly at the top of hell and overlaps the hills.
+        drawGrass(grassBaseHeight, grassAmplitude, grassStretch, "#334a14");
 
-    // Hell and Flames
-    drawHell();
-    drawFlames();
+        // Draw hell and flames (adjust order if needed).
+        drawHell();
+        drawFlames();
 
-    // Trees
-    trees.forEach(tree => drawTree(tree.x, tree.color));
-}
+        // Draw trees on top.
+        trees.forEach(tree => drawTree(tree.x, tree.color));
+    }
+
+
 
     function drawHill(baseHeight, amplitude, stretch, color) {
     const groundY = window.innerHeight - hellBaseHeight;
@@ -293,16 +295,29 @@
 }
 
     function drawGrass(baseHeight, amplitude, stretch, color) {
-    ctx.beginPath();
-    ctx.moveTo(0, window.innerHeight);
-    ctx.lineTo(0, getHillY(0, baseHeight, amplitude, stretch));
-    for (let i = 0; i < window.innerWidth; i++) {
-    ctx.lineTo(i, getHillY(i, baseHeight, amplitude, stretch));
-}
-    ctx.lineTo(window.innerWidth, window.innerHeight);
-    ctx.fillStyle = color;
-    ctx.fill();
-}
+        // The bottom edge of grass is fixed at the top of hell.
+        const grassBottomY = canvas.height - hellBaseHeight;
+        // Define the overlap amount (how much higher the grass extends relative to the hill curve).
+        const overlap = 50; // Adjust this value as needed.
+
+        ctx.beginPath();
+        // For every x, compute the hill curve and then shift it upward by 'overlap'
+        for (let x = 0; x <= canvas.width; x++) {
+            let y = getHillY(x, baseHeight, amplitude, stretch) - overlap;
+            ctx.lineTo(x, y);
+        }
+        // Draw a line from the right end down to the bottom edge, then back to left.
+        ctx.lineTo(canvas.width, grassBottomY);
+        ctx.lineTo(0, grassBottomY);
+        ctx.closePath();
+
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+
+
+
 
     function getHillY(windowX, baseHeight, amplitude, stretch) {
     const sineBaseY = window.innerHeight - baseHeight;
@@ -310,27 +325,36 @@
 }
 
     function drawHell() {
-    if (hellPattern === null) {
-    console.warn("Hell pattern not loaded yet.");
-    return;
-}
-    // Optionally adjust the transform (here scaling down by 0.5)
-    const matrix = new DOMMatrix().scale(0.5, 0.5);
-    hellPattern.setTransform(matrix);
-    ctx.fillStyle = hellPattern;
-    ctx.fillRect(0, window.innerHeight - hellBaseHeight, window.innerWidth, hellBaseHeight);
-}
+        if (hellPattern === null) {
+            console.warn("Hell pattern not loaded yet.");
+            return;
+        }
+        // Translate horizontally according to the scene offset (for parallax) and vertically so the top is at window.innerHeight - hellBaseHeight
+        const matrix = new DOMMatrix()
+            .translate(-sceneOffset * backgroundSpeedMultiplier, window.innerHeight - hellBaseHeight)
+            .scale(0.5, 0.9);
+        hellPattern.setTransform(matrix);
+
+        ctx.fillStyle = hellPattern;
+        ctx.fillRect(0, window.innerHeight - hellBaseHeight, window.innerWidth, hellBaseHeight);
+    }
 
     function drawFlames() {
-    if (flamesPattern === null) {
-    console.warn("Flames pattern not loaded yet.");
-    return;
-}
-    const matrix = new DOMMatrix().scale(0.4, 0.4);
-    flamesPattern.setTransform(matrix);
-    ctx.fillStyle = flamesPattern;
-    ctx.fillRect(0, window.innerHeight - flamesBaseHeight, window.innerWidth, flamesBaseHeight);
-}
+        if (flamesPattern === null) {
+            console.warn("Flames pattern not loaded yet.");
+            return;
+        }
+        // Apply the same horizontal parallax translation and position vertically at window.innerHeight - flamesBaseHeight
+        const matrix = new DOMMatrix()
+            .translate(-sceneOffset * backgroundSpeedMultiplier, window.innerHeight - flamesBaseHeight)
+            .scale(0.4, 0.3);
+        flamesPattern.setTransform(matrix);
+
+        ctx.fillStyle = flamesPattern;
+        ctx.fillRect(0, window.innerHeight - flamesBaseHeight, window.innerWidth, flamesBaseHeight);
+    }
+
+
 
     function drawTree(x, color) {
     ctx.save();
