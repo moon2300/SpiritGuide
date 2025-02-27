@@ -50,11 +50,16 @@ body {
     height: 100%;
 }
 
-.start-indhold{
-display: flex;
+.start-indhold {
+    display: flex;
     justify-content: center;
     gap: 20px;
+    flex-direction: row;
+    padding: 50px;
+    width: 700px;
+    height: 500px;
 }
+
 
 .start-button{
     display: flex;
@@ -148,15 +153,9 @@ input{
 height: 250px;
 }
 
-.start-indhold{
-    display: flex;
-    flex-direction: row;
-    padding: 50px;
-    width: 700px;
-    height: 500px;
-}
 
-.submit-button {
+.submit-button,
+#restart {
     display: flex;
     border: darkred;
     width: 300px;
@@ -172,6 +171,11 @@ height: 250px;
     text-decoration: none;
     transition: all 300ms ease-in-out;
 }
+
+.submit-button:hover {
+    background-color: black;
+}
+
 .submit-button:hover {
     background-color: black;
 }
@@ -216,25 +220,11 @@ p{
 }
 
 
-#restart {
-    display: flex;
-    border: darkred;
-    width: 300px;
-    align-items: center;
-    justify-content: center;
-    background-color: darkred;
-    border-radius: 10px;
-    padding: 20px 40px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all 300ms ease-in-out;
-}
 
 #perfect {
+    position: absolute;
+    font-weight: bold;
     color: darkred;
     opacity: 0;
-    transition: opacity 2s;
+    transition: opacity 1s;
 }

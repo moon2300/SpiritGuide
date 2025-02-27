@@ -65,6 +65,7 @@
     const restartButton = document.getElementById("restart");
     const scoreElement = document.getElementById("score");
     const bonusElement = document.getElementById("bonus");
+    const perfectElement = document.getElementById("perfect");
     const startOverlay = document.querySelector('.start-overlay');
     const startButton = document.querySelector('#start');
     const gameOverOverlay = document.querySelector('.game-over-overlay');
@@ -193,7 +194,9 @@
             if (perfectHit) {
                 bonus++;
                 score+=1;
-                score *= bonus   ;
+                score *= bonus;
+                perfectElement.style.opacity = "1";
+                setTimeout(() => (perfectElement.style.opacity = "0"), 1000);
             } else if (bonus <=0){
                 bonus = 0
             }else{
