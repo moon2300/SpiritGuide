@@ -20,6 +20,7 @@
     let sticks = [];
     let trees = [];
     let score = 0;
+    let bonus = 0;
     let gameRunning = false;
 
     // --- Constants ---
@@ -61,7 +62,10 @@
     const ctx = canvas.getContext("2d");
 
     // --- UI Elements ---
-    const restartButton = document.getElementById("restart");const scoreElement = document.getElementById("score");
+    const restartButton = document.getElementById("restart");
+    const scoreElement = document.getElementById("score");
+    const bonusElement = document.getElementById("bonus");
+    const perfectElement = document.getElementById("perfect")
     const startOverlay = document.querySelector('.start-overlay');
     const startButton = document.querySelector('#start');
     const gameOverOverlay = document.querySelector('.game-over-overlay');
@@ -108,8 +112,17 @@
     lastTimestamp = undefined;
     sceneOffset = 0;
     score = 0;
+    bonus= 0;
     gameRunning = true;
     scoreElement.innerText = score;
+        if(bonus !== 0) {
+            bonusElement.innerText = bonus + " x";
+            bonusElement.style.display = 'block'
+
+        }else{
+            bonusElement.style.display = 'none'
+        }
+
 
     // Reset platforms, sticks, and trees
     platforms = [{ x: 50, w: 80 }]; // fixed starting platform
@@ -177,8 +190,29 @@
     sticks.last().rotation = 90;
     const [nextPlatform, perfectHit] = thePlatformTheStickHits();
     if (nextPlatform) {
-    score += perfectHit ? 2 : 1;
-    scoreElement.innerText = score;
+        if (perfectHit) {
+
+
+            bonus++;
+            score+=1;
+            score *= bonus   ;
+        } else if (bonus <=0){
+                bonus = 0
+            }else{
+            bonus = 0;
+            score += 1;
+        }
+        scoreElement.innerText = score;
+
+        if(bonus !== 0) {
+            bonusElement.innerText = bonus + " x";
+            bonusElement.style.display = 'block'
+
+        }else{
+                bonusElement.style.display = 'none'
+            }
+
+
     generatePlatform();
 }
     phase = "walking";

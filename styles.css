@@ -108,13 +108,14 @@ input{
 }
 
 .game-over-container{
-    width: 500px;
-    height: 700px;
+    width: 800px;
+    height: 550px;
     background: white;
     border-radius: 5px;
-   align-items: center;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .start-overlay {
@@ -176,11 +177,16 @@ height: 250px;
 }
 
 
-#score {
+
+
+.score-ui{
+    gap: 10px;
+    display: flex;
+    flex-direction: row-reverse;
     position: absolute;
     top: 30px;
     right: 30px;
-    font-size: 2em;
+    font-size: 30px;
     font-weight: 900;
 }
 
@@ -228,7 +234,7 @@ p{
 }
 
 #perfect {
-    position: absolute;
+    color: darkred;
     opacity: 0;
     transition: opacity 2s;
 }
