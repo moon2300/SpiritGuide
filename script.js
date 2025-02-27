@@ -144,16 +144,16 @@
 }
 
     function generatePlatform() {
-    const minimumGap = 40;
-    const maximumGap = 200;
-    const minimumWidth = 25;
-    const maximumWidth = 100;
-    const lastPlatform = platforms[platforms.length - 1];
-    const furthestX = lastPlatform.x + lastPlatform.w;
-    const x = furthestX + minimumGap + Math.floor(Math.random() * (maximumGap - minimumGap));
-    const w = minimumWidth + Math.floor(Math.random() * (maximumWidth - minimumWidth));
-    platforms.push({ x, w });
-}
+        const minimumGap = 40;
+        const maximumGap = 200;
+        const minimumWidth = 25;
+        const maximumWidth = 100;
+        const lastPlatform = platforms[platforms.length - 1];
+        const furthestX = lastPlatform.x + lastPlatform.w;
+        const x = furthestX + minimumGap + Math.floor(Math.random() * (maximumGap - minimumGap));
+        const w = minimumWidth + Math.floor(Math.random() * (maximumWidth - minimumWidth));
+        platforms.push({ x, w });
+    }
 
     function generateTree() {
     const minimumGap = 30;
@@ -209,7 +209,7 @@
             }else{
                 bonusElement.style.display = 'none'
             }
-
+            generatePlatform();
         }
     phase = "walking";
 }
