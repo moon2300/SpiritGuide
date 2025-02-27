@@ -223,6 +223,7 @@ p{
 
 #perfect {
     position: absolute;
+    font-size: 30px;
     font-weight: bold;
     color: darkred;
     opacity: 0;
