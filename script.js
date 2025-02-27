@@ -96,14 +96,16 @@
     flamesImage.onload = function () {
     let scaleFactor = 0.5; // adjust as needed
     flamesPattern = createResizedPattern(flamesImage, scaleFactor);
+        resetGame();
 };
     hellImage.onload = function () {
     let hellScaleFactor = 0.5; // adjust as needed
     hellPattern = createResizedPattern(hellImage, hellScaleFactor, "repeat-x");
+        resetGame();
 };
     platformImage.onload = function () {
     platformPattern = ctx.createPattern(platformImage, "repeat");
-    resetGame(); // Initial draw once the platform pattern is ready
+        resetGame();  // Initial draw once the platform pattern is ready
 };
 
     // --- Game Functions ---
