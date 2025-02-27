@@ -46,7 +46,7 @@
 
     <div class="game-over-container">
         <div class="indhold">
-            <img src="piczz/GhostEnd.svg" id="ghost" alt="Ghost character">
+            <img src="piczz/GhostSlut.svg" id="ghost" alt="Ghost character">
         <h2>Game Over!</h2>
         <p>Your score: <span class="game-over-score"></span></p>
             <label for="playerName">Enter your name:</label>
