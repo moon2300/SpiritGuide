@@ -31,10 +31,16 @@
 </div>
 
 <div class="container">
+    <div class="score-ui">
     <div id="score"></div>
+        <div class="minus">
+    <div id="bonus"></div>
+        <div id="perfect">-1</div>
+        </div>
+    </div>
     <canvas id="game" width="375" height="375"></canvas>
     <div id="introduction"></div>
-    <div id="perfect">DOUBLE SCORE</div>
+
 </div>
 
 
@@ -42,14 +48,19 @@
 
     <div class="game-over-container">
         <div class="indhold">
+            <img src="piczz/GhostEnd.svg" id="ghost" alt="Ghost character">
         <h2>Game Over!</h2>
         <p>Your score: <span class="game-over-score"></span></p>
         <input type="text" class="submit-name-input" placeholder="Enter your name" />
         <br />
+
+            <div class="buttons">
         <button class="submit-button">Submit Score</button>
             <p>or</p>
 
             <button id="restart">RESTART</button>
+
+            </div>
     </div>
 
     </div>
