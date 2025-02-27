@@ -207,7 +207,11 @@ function animate(timestamp) {
                         score+=1;
                         score *= bonus;
                         perfectElement.style.opacity = "1";
-                        setTimeout(() => (perfectElement.style.opacity = "0"), 1000);
+                        perfectElement.textContent = bonus + "x";
+                        setTimeout(() => {
+                            perfectElement.style.opacity = "0";
+                            setTimeout(() => perfectElement.textContent = "PERFECT", 1000);
+                        }, 1000);
                     } else if (bonus <=0){
                         bonus = 0
                     }else{
@@ -216,11 +220,7 @@ function animate(timestamp) {
                     }
                     scoreElement.innerText = score;
 
-                    if(bonus !== 0) {
-                        bonusElement.innerText = bonus + " x";
-                        bonusElement.style.display = 'block'
-
-                    }else{
+                    {
                         bonusElement.style.display = 'none'
                     }
 
@@ -320,7 +320,7 @@ function drawBackground() {
     drawHill(hill2BaseHeight, hill2Amplitude, hill2Stretch, "#659F1C");
 
     // Draw grass (overlapping the hills).
-    drawGrass(grassBaseHeight, grassAmplitude, grassStretch, "#334a14");
+    drawGrass(grassBaseHeight, grassAmplitude, grassStretch, "#263c0a");
 
     // Draw hell and flames.
     drawHell();
@@ -350,7 +350,7 @@ function drawGrass(baseHeight, amplitude, stretch, color) {
     const overlap = 50; // Adjust as needed.
     ctx.beginPath();
     for (let x = 0; x <= canvas.width; x++) {
-        let y = getHillY(x, baseHeight, amplitude, stretch) - overlap;
+        let y = getHillY(x + sceneOffset, baseHeight, amplitude, stretch, true) - overlap;
         ctx.lineTo(x, y);
     }
     ctx.lineTo(canvas.width, grassBottomY);
@@ -360,9 +360,10 @@ function drawGrass(baseHeight, amplitude, stretch, color) {
     ctx.fill();
 }
 
-function getHillY(windowX, baseHeight, amplitude, stretch) {
+function getHillY(windowX, baseHeight, amplitude, stretch, isGrass = false) {
     const sineBaseY = window.innerHeight - baseHeight;
-    return Math.sinus((sceneOffset * backgroundSpeedMultiplier + windowX) * stretch) * amplitude + sineBaseY;
+    const offset = isGrass ? sceneOffset : sceneOffset * backgroundSpeedMultiplier;
+    return Math.sinus((offset + windowX) * stretch) * amplitude + sineBaseY;
 }
 
 function drawHell() {
