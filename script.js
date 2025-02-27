@@ -20,7 +20,6 @@
     let sticks = [];
     let trees = [];
     let score = 0;
-    let bonus = 0;
     let gameRunning = false;
 
     // --- Constants ---
@@ -62,10 +61,7 @@
     const ctx = canvas.getContext("2d");
 
     // --- UI Elements ---
-    const restartButton = document.getElementById("restart");
-    const scoreElement = document.getElementById("score");
-    const bonusElement = document.getElementById("bonus");
-    const perfectElement = document.getElementById("perfect")
+    const restartButton = document.getElementById("restart");const scoreElement = document.getElementById("score");
     const startOverlay = document.querySelector('.start-overlay');
     const startButton = document.querySelector('#start');
     const gameOverOverlay = document.querySelector('.game-over-overlay');
@@ -96,10 +92,12 @@
     flamesImage.onload = function () {
     let scaleFactor = 0.5; // adjust as needed
     flamesPattern = createResizedPattern(flamesImage, scaleFactor);
+        resetGame();
 };
     hellImage.onload = function () {
     let hellScaleFactor = 0.5; // adjust as needed
     hellPattern = createResizedPattern(hellImage, hellScaleFactor, "repeat-x");
+        resetGame();
 };
     platformImage.onload = function () {
     platformPattern = ctx.createPattern(platformImage, "repeat");
@@ -112,17 +110,8 @@
     lastTimestamp = undefined;
     sceneOffset = 0;
     score = 0;
-    bonus= 0;
     gameRunning = true;
     scoreElement.innerText = score;
-        if(bonus !== 0) {
-            bonusElement.innerText = bonus + " x";
-            bonusElement.style.display = 'block'
-
-        }else{
-            bonusElement.style.display = 'none'
-        }
-
 
     // Reset platforms, sticks, and trees
     platforms = [{ x: 50, w: 80 }]; // fixed starting platform
@@ -190,29 +179,8 @@
     sticks.last().rotation = 90;
     const [nextPlatform, perfectHit] = thePlatformTheStickHits();
     if (nextPlatform) {
-        if (perfectHit) {
-
-
-            bonus++;
-            score+=1;
-            score *= bonus   ;
-        } else if (bonus <=0){
-                bonus = 0
-            }else{
-            bonus = 0;
-            score += 1;
-        }
-        scoreElement.innerText = score;
-
-        if(bonus !== 0) {
-            bonusElement.innerText = bonus + " x";
-            bonusElement.style.display = 'block'
-
-        }else{
-                bonusElement.style.display = 'none'
-            }
-
-
+    score += perfectHit ? 2 : 1;
+    scoreElement.innerText = score;
     generatePlatform();
 }
     phase = "walking";
@@ -365,7 +333,7 @@
         }
         // Translate horizontally according to the scene offset (for parallax) and vertically so the top is at window.innerHeight - hellBaseHeight
         const matrix = new DOMMatrix()
-            .translate(-sceneOffset * backgroundSpeedMultiplier, window.innerHeight - hellBaseHeight)
+            .translate(-sceneOffset, window.innerHeight - hellBaseHeight)
             .scale(0.5, 0.9);
         hellPattern.setTransform(matrix);
 
@@ -380,7 +348,7 @@
         }
         // Apply the same horizontal parallax translation and position vertically at window.innerHeight - flamesBaseHeight
         const matrix = new DOMMatrix()
-            .translate(-sceneOffset * backgroundSpeedMultiplier, window.innerHeight - flamesBaseHeight)
+            .translate(-sceneOffset, window.innerHeight - flamesBaseHeight)
             .scale(0.4, 0.3);
         flamesPattern.setTransform(matrix);
 
