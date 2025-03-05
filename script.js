@@ -117,6 +117,7 @@ function resetGame() {
     gameRunning = true;
     scoreElement.innerText = score;
     bonusElement.style.display = bonus !== 0 ? 'block' : 'none';
+    gameOverOverlay.classList.add("hidden");
 
     // Reset platforms, trees, gravestones, and sticks
     platforms = [{x: 50, w: 80}];
@@ -626,8 +627,6 @@ window.addEventListener("mousedown", () => {
         window.requestAnimationFrame(animate);
     }
 });
-
-
 
 window.addEventListener("mouseup", () => {
     if (phase === "stretching") {

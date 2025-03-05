@@ -1,16 +1,17 @@
+/* -------------------- Base Styles -------------------- */
 html,
 body {
     height: 100%;
     margin: 0;
 }
 
-body {
-}
+/* -------------------- Canvas & Global Elements -------------------- */
 
-
-
-#start{
-    border: solid 3px black;
+/* -------------------- Buttons -------------------- */
+#start,
+.submit-button,
+#restart {
+    border: 3px solid black;
     display: flex;
     width: 300px;
     height: 60px;
@@ -22,22 +23,39 @@ body {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 30px;
-
+    cursor: pointer;
 }
 
-#start:hover{
+#start:hover,
+.submit-button:hover,
+#restart:hover {
     background-color: #C1272D;
 }
-.game-over-overlay.hidden {
-    display: none;
-    pointer-events: none;
+
+/* -------------------- Overlays -------------------- */
+.game-over-overlay,
+.start-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }
 
+.game-over-overlay {
+    display: none;
+}
 .start-overlay.hidden {
     display: none;
     pointer-events: none;
 }
 
+/* -------------------- Containers -------------------- */
 .container {
     display: flex;
     justify-content: center;
@@ -45,33 +63,52 @@ body {
     height: 100%;
 }
 
-h1{
-    color:#F68B00 ;
+.start-container,
+.game-over-container {
+    width: 422px;
+    background: #1D1712;
+    border: 3px solid;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+/* Specific heights for overlays */
+.start-container {
+    height: 580px;
+}
+.game-over-container {
+    height: 600px;
+}
+
+/* -------------------- Typography -------------------- */
+h1 {
+    color: #F68B00;
     font-size: 36px;
     padding-top: 40px;
 }
 
-.start-indhold {
+.start-indhold,
+.indhold {
     padding-top: 20px;
     padding-left: 50px;
     display: flex;
-   flex-shrink: 30;
     flex-direction: row;
+    flex-shrink: 30;
     width: 422px;
-
 }
 
-
-.start-button{
+.start-button {
     display: flex;
     flex-direction: column;
-   height: 250px;
     width: 260px;
-
+    height: 250px;
 }
-.start-button h2{
 
-    padding: 10px 10px;
+.start-button h2 {
+    padding: 10px;
     border-radius: 10px;
     color: white;
     font-size: 13px;
@@ -79,125 +116,29 @@ h1{
     text-decoration: none;
 }
 
-.start-container p{
-    color: #C1272D;
-}
-
-.indhold{
-    padding-top: 20px;
-    padding-left: 50px;
-    display: flex;
-    flex-shrink: 30;
-    flex-direction: row;
-    width: 422px;
-}
-
-.indhold h2{
-    color:#F68B00 ;
+.indhold h2 {
+    color: #F68B00;
     font-size: 36px;
     padding-top: 40px;
 }
 
-input{
+p {
+    color: #C1272D;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* -------------------- Form Elements -------------------- */
+input {
     border-radius: 10px;
     padding: 16px 32px;
     font-size: 20px;
-
-}
-.game-over-overlay{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    background: rgba(0,0,0,0.7);
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
 }
 
-.game-over-container{
-    width: 422px;
-    height: 600px;
-    background: #1D1712;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    border-width: 3px;
-    border-style: solid;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.start-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.start-container {
-    width: 422px;
-    height: 580px;
-    background: #1D1712;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    border-width: 3px;
-    border-style: solid;
-    justify-content: space-evenly;
-    align-items: center;
-
-}
-
-#ghost{
-    display: flex;
-width: 122px;
-}
-
-
-.submit-button,
-#restart {
-    border: solid 3px black;
-    display: flex;
-    width: 300px;
-    height: 60px;
-    align-items: center;
-    justify-content: center;
-    background-color: #F68B00;
-    border-radius: 25px;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 30px;
-}
-
-.submit-button:hover,
-#restart:hover {
-    background-color: #C1272D;
-}
-
-.buttons p{
-    color: white;
-}
-
-label{
-    color: white;
-}
-
-.score-board{
-    display: flex;
-    justify-content: center;
-}
-
-.score-ui{
+/* -------------------- Score & UI -------------------- */
+.score-ui {
     display: flex;
     flex-direction: row-reverse;
     position: absolute;
@@ -207,34 +148,6 @@ label{
     font-weight: 900;
 }
 
-
-#introduction {
-    position: absolute;
-    width: 300px;
-    align-items: center;
-    border-radius: 10px;
-    padding: 20px 40px;
-    color: darkred;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-decoration: none;
-    text-align: center;
-
-}
-
-
-p{
-    color: #C1272D;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-align: center;
-}
-
-
-
-
 #perfect {
     position: absolute;
     font-size: 30px;
@@ -242,4 +155,31 @@ p{
     color: darkred;
     opacity: 0;
     transition: opacity 1s;
+}
+
+/*.instructions {
+    width: 200px;
+    height: 150px;
+    position: absolute;
+    font-weight: 600;
+    font-size: 0.8em;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    transition: opacity 2s;
+    }
+*/
+
+
+/* -------------------- Miscellaneous -------------------- */
+#ghost {
+    display: flex;
+    width: 122px;
+}
+
+.buttons p {
+    color: white;
+}
+
+label {
+    color: white;
 }

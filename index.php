@@ -32,12 +32,12 @@
 
 </div>
 
-<!-- <div class="start-button">
+ <!--<div class="instructions">
                <h2>Hold down the mouse to stretch the stick</h2>
-               <img class="mus-gif" src="piczz/fabacc95e84c8d7e39667972aad1ed83.gif" alt="">
 
-           </div> -->
+           </div>
 
+-->
 
 <div class="container">
     <div id="perfect">SCORE MULTIPLIED</div>
