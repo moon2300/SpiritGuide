@@ -57,6 +57,7 @@
         <div class="indhold">
             <img src="piczz/GhostSlut.svg" id="ghost" alt="Ghost character">
             <h2>Game Over!</h2>
+        </div>
             <p>Your score: <span class="game-over-score"></span></p>
             <label for="playerName">Enter your name:</label>
             <input type="text" id="playerName" class="submit-name-input" placeholder="Enter your name"/>
@@ -64,13 +65,13 @@
             <br/>
 
             <div class="buttons">
-                <button class="submit-button">Submit Score</button>
+                <button class="submit-button">SUBMIT SCORE</button>
                 <p>or</p>
 
                 <button id="restart">RESTART</button>
 
             </div>
-        </div>
+
 
     </div>
 
