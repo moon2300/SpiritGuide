@@ -208,7 +208,7 @@ function animate(timestamp) {
                 if (nextPlatform) {
                     if (perfectHit) {
                         bonus++;
-                        score+=1;
+                        score += 1;
                         score *= bonus;
                         perfectElement.style.opacity = "1";
                         perfectElement.textContent = bonus + "x";
@@ -216,8 +216,6 @@ function animate(timestamp) {
                             perfectElement.style.opacity = "0";
                             setTimeout(() => perfectElement.textContent = "PERFECT", 1000);
                         }, 1000);
-                    } else if (bonus <=0){
-                        bonus = 0
                     }else {
                         bonus = 0;
                         score += 1;
