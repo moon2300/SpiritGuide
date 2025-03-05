@@ -171,15 +171,14 @@ input {
     transition: opacity 2s;
     }
 
-#instructions, img{
-
+#mouse{
     height: 60px;
 }
 
 /* -------------------- Miscellaneous -------------------- */
 #ghost {
     display: flex;
-    width: 122px;
+    height:  122px;
 }
 
 .buttons p {

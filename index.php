@@ -44,7 +44,7 @@
     </div>
     <div id="instructions">
     Hold down the mouse to stretch the stick
-        <img src="piczz/mouse.svg" alt="mouse clicking down">
+        <img id="mouse" src="piczz/mouse.svg" alt="mouse clicking down">
     </div>
 
     <div class="score-ui">
