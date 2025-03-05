@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <title>Spirit Guide</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 
