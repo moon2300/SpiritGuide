@@ -5,33 +5,28 @@ body {
 }
 
 body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    cursor: pointer;
 }
 
 
 
-
 #start{
+    border: solid 3px black;
     display: flex;
-    border: darkred;
-    width: 650px;
+    width: 300px;
+    height: 60px;
     align-items: center;
     justify-content: center;
-    background-color: darkred;
-    border-radius: 10px;
-    padding: 30px 40px;
+    background-color: #F68B00;
+    border-radius: 25px;
     color: white;
     font-size: 18px;
     font-weight: bold;
-    text-transform: uppercase;
-    text-decoration: none;
     margin-bottom: 30px;
 
 }
 
 #start:hover{
-    background-color: black;
+    background-color: #C1272D;
 }
 .game-over-overlay.hidden {
     display: none;
@@ -50,14 +45,20 @@ body {
     height: 100%;
 }
 
+h1{
+    color:#F68B00 ;
+    font-size: 36px;
+    padding-top: 40px;
+}
+
 .start-indhold {
+    padding-top: 20px;
+    padding-left: 50px;
     display: flex;
-    justify-content: center;
-    gap: 20px;
+   flex-shrink: 30;
     flex-direction: row;
-    padding: 50px;
-    width: 700px;
-    height: 500px;
+    width: 422px;
+
 }
 
 
@@ -65,22 +66,21 @@ body {
     display: flex;
     flex-direction: column;
    height: 250px;
-    width: 300px;
+    width: 260px;
 
 }
 .start-button h2{
 
     padding: 10px 10px;
     border-radius: 10px;
-    color: darkred;
-    font-size: 16px;
+    color: white;
+    font-size: 13px;
     font-weight: bold;
-    text-transform: uppercase;
     text-decoration: none;
-    text-align: center;
 }
-.mus-gif{
-    width: 250px;
+
+.start-container p{
+    color: #C1272D;
 }
 
 .indhold{
@@ -137,31 +137,33 @@ input{
 }
 
 .start-container {
-    width: 800px;
-    height: 550px;
-    background: white;
-    border-radius: 5px;
+    width: 422px;
+    height: 580px;
+    background: #292828;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
+    border-width: 3px;
+    border-style: solid;
+    justify-content: space-evenly;
     align-items: center;
-    justify-content: center;
+
 }
 
 #ghost{
     display: flex;
-    align-self: center;
-height: 250px;
+width: 122px;
 }
 
 
 .submit-button,
 #restart {
     display: flex;
-    border: darkred;
+    border: black;
     width: 300px;
     align-items: center;
     justify-content: center;
-    background-color: darkred;
+    background-color: black;
     border-radius: 10px;
     padding: 20px 40px;
     color: white;
@@ -173,7 +175,7 @@ height: 250px;
 }
 
 .submit-button:hover {
-    background-color: black;
+    background-color: darkred;
 }
 
 .submit-button:hover {
@@ -181,7 +183,10 @@ height: 250px;
 }
 
 
-
+.score-board{
+    display: flex;
+    justify-content: center;
+}
 
 .score-ui{
     gap: 10px;

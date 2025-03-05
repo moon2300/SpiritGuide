@@ -626,9 +626,39 @@ window.addEventListener("mousedown", () => {
         window.requestAnimationFrame(animate);
     }
 });
+
+
+
 window.addEventListener("mouseup", () => {
     if (phase === "stretching") {
         phase = "turning";
+    }
+});
+
+// Keyboard Input for Stretching and Turning
+window.addEventListener("keydown", (e) => {
+    // Check if it's the Space key
+    if (e.code === "Space") {
+        // Prevent scrolling if needed
+        e.preventDefault();
+        // If the game is waiting, switch to "stretching"
+        if (phase === "waiting") {
+            lastTimestamp = undefined;
+            phase = "stretching";
+            window.requestAnimationFrame(animate);
+        }
+    }
+});
+
+window.addEventListener("keyup", (e) => {
+    // Also check if it's the Space key
+    if (e.code === "Space") {
+        // Prevent scrolling if needed
+        e.preventDefault();
+        // If the game is stretching, switch to "turning"
+        if (phase === "stretching") {
+            phase = "turning";
+        }
     }
 });
 
@@ -656,4 +686,10 @@ submitButton.addEventListener('click', (e) => {
     setTimeout(() => {
         window.location.reload();
     }, 500);
+});
+
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'Enter') {
+        window.location.reload();
+    }
 });
