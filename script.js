@@ -61,6 +61,7 @@ canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
 
 // --- UI Elements ---
+const instructionsElement = document.getElementById("instructions")
 const restartButton = document.getElementById("restart");
 const scoreElement = document.getElementById("score");
 const bonusElement = document.getElementById("bonus");
@@ -72,6 +73,7 @@ const nameInput = document.querySelector('.submit-name-input');
 const submitButton = document.querySelector('.submit-button');
 const gameOverScore = document.querySelector('.game-over-score');
 
+
 // --- Image Setup ---
 const platformImage = new Image();
 platformImage.src = "texture3.png"; // Ensure path is correct
@@ -81,6 +83,7 @@ flamesImage.src = "flames.png";
 
 const hellImage = new Image();
 hellImage.src = "dirtS.jpg";
+
 
 // Create resized patterns using an offscreen canvas
 function createResizedPattern(image, scaleFactor, repetition = "repeat") {
@@ -107,6 +110,7 @@ platformImage.onload = function () {
     resetGame(); // Initial draw once the platform pattern is ready
 };
 
+
 // --- Game Functions ---
 function resetGame() {
     phase = "waiting";
@@ -118,8 +122,7 @@ function resetGame() {
     scoreElement.innerText = score;
     bonusElement.style.display = bonus !== 0 ? 'block' : 'none';
     gameOverOverlay.classList.add("hidden");
-
-    // Reset platforms, trees, gravestones, and sticks
+    instructionsElement.style.opacity = 1;
     platforms = [{x: 50, w: 80}];
     trees = [];
     graveStones = [];
@@ -215,7 +218,7 @@ function animate(timestamp) {
                         }, 1000);
                     } else if (bonus <=0){
                         bonus = 0
-                    }else{
+                    }else {
                         bonus = 0;
                         score += 1;
                     }
@@ -257,6 +260,7 @@ function animate(timestamp) {
             break;
         }
 
+
         case "transitioning": {
             sceneOffset += (timestamp - lastTimestamp) / transitioningSpeed;
             const [nextPlatform] = thePlatformTheStickHits();
@@ -290,6 +294,7 @@ function animate(timestamp) {
     lastTimestamp = timestamp;
     window.requestAnimationFrame(animate);
 }
+
 
 // --- Drawing Functions ---
 function draw() {
@@ -621,6 +626,10 @@ startButton.addEventListener('click', () => {
 
 // Mouse Input for Stretching and Turning
 window.addEventListener("mousedown", () => {
+    // Hide instructions when mousedown occurs.
+    if (instructionsElement) {
+        instructionsElement.style.opacity = "0";
+    }
     if (phase === "waiting") {
         lastTimestamp = undefined;
         phase = "stretching";
@@ -628,24 +637,26 @@ window.addEventListener("mousedown", () => {
     }
 });
 
-window.addEventListener("mouseup", () => {
-    if (phase === "stretching") {
-        phase = "turning";
-    }
-});
-
-// Keyboard Input for Stretching and Turning
 window.addEventListener("keydown", (e) => {
-    // Check if it's the Space key
     if (e.code === "Space") {
-        // Prevent scrolling if needed
         e.preventDefault();
-        // If the game is waiting, switch to "stretching"
+        // Hide instructions when Space is pressed.
+        if (instructionsElement) {
+            instructionsElement.style.opacity = "0";
+        }
         if (phase === "waiting") {
             lastTimestamp = undefined;
             phase = "stretching";
             window.requestAnimationFrame(animate);
         }
+    }
+});
+
+
+window.addEventListener("mouseup", () => {
+    if (phase === "stretching") {
+        phase = "turning";
+
     }
 });
 

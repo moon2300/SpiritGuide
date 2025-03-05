@@ -32,15 +32,21 @@
 
 </div>
 
- <!--<div class="instructions">
-               <h2>Hold down the mouse to stretch the stick</h2>
+<div class="instructions">
+
 
            </div>
 
--->
 
 <div class="container">
-    <div id="perfect">SCORE MULTIPLIED</div>
+    <div id="perfect">
+
+    </div>
+    <div id="instructions">
+    Hold down the mouse to stretch the stick
+        <img src="piczz/mouse.svg" alt="mouse clicking down">
+    </div>
+
     <div class="score-ui">
         <div id="score"></div>
         <div id="bonus"></div>
