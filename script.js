@@ -50,7 +50,7 @@ const fallingSpeed = 2;
 const ghostWidth = 17;
 const ghostHeight = 30;
 const ghostFloatSpeed = 0.2;
-const ghostFloatMaxOffset = 3.5;
+const ghostFloatMaxOffset = 2;
 
 // Additional background constants
 const backgroundSpeedMultiplier = 0.2;
