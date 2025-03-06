@@ -123,7 +123,7 @@ function resetGame() {
     scoreElement.innerText = score;
     bonusElement.style.display = bonus !== 0 ? 'block' : 'none';
     gameOverOverlay.classList.add("hidden");
-    instructionsElement.style.opacity = 1;
+    instructionsElement.style.opacity = "1";
     platforms = [{x: 50, w: 80}];
     trees = [];
     graveStones = [];

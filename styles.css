@@ -14,7 +14,6 @@ body {
     border: 3px solid black;
     display: flex;
     width: 300px;
-
     height: 60px;
     align-items: center;
     justify-content: center;
@@ -90,7 +89,10 @@ h1 {
     font-size: 36px;
     padding-top: 40px;
 }
-
+iframe {
+    border: solid 3px #000000;
+    border-radius: 10px;
+}
 .start-indhold,
 .indhold {
     padding-top: 20px;

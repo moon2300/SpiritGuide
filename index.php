@@ -20,7 +20,7 @@
         </div>
         <p>Top scores</p>
         <div class="score-board">
-            <iframe src="https://highscores.martindilling.com/games/70/embed?fontSize=100" title="Highscore table for Spirit Guide" width="250px" height="270px"></iframe>
+            <iframe src="https://highscores.martindilling.com/games/70/embed?fontSize=100&bgColor=000000&textColor=F68B00&borderColor=F68B00" title="Highscore table for Spirit Guide" width="250px" height="270px"></iframe>
         </div>
 
         <br/>
