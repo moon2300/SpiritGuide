@@ -700,6 +700,7 @@ submitButton.addEventListener('click', (e) => {
 window.addEventListener('keydown', (e) => {
     if (e.code === 'Enter') {
         startOverlay.style.display = "none";
+        gameOverOverlay.style.display = "none";
         resetGame();
         gameStarted = true;
         gameRunning = true;
