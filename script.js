@@ -9,11 +9,16 @@ Math.sinus = function (degree) {
 // --- Game Data & Variables ---
 let phase = "waiting"; // "waiting" | "stretching" | "turning" | "walking" | "transitioning" | "falling"
 let lastTimestamp;
-let heroX;
-let heroY;
+let ghostX;
+let ghostY;
+let ghostFloatOffset = 0;
+let ghostFloatDirection = 1;
 let sceneOffset;
 let platformPattern = null;
-let flamesPattern = null;
+let flames1Pattern = null;
+let flames2Pattern = null;
+let flames2Offset = 0; //offset for vertical movement
+let flames2Direction = 1; //1 for up -1 for down
 let hellPattern = null;
 let platforms = [];
 let sticks = [];
@@ -28,7 +33,7 @@ let gameStarted = false;
 const canvasWidth = 375;
 const canvasHeight = 375;
 const platformHeight = 100;
-const heroDistanceFromEdge = 25;
+const ghostDistanceFromEdge = 25;
 const paddingX = 100;
 const perfectAreaSize = 25;
 
@@ -38,8 +43,10 @@ const walkingSpeed = 4;
 const transitioningSpeed = 2;
 const fallingSpeed = 2;
 
-const heroWidth = 17;
-const heroHeight = 30;
+const ghostWidth = 17;
+const ghostHeight = 30;
+const ghostFloatSpeed = 0.02;
+const ghostFloatMaxOffset = 2;
 
 // Additional background constants
 const backgroundSpeedMultiplier = 0.2;
@@ -50,10 +57,16 @@ const hill2BaseHeight = 375;
 const hill2Amplitude = 20;
 const hill2Stretch = 0.5;
 const hellBaseHeight = 240;
-const flamesBaseHeight = 200;
 const grassBaseHeight = 230;
 const grassAmplitude = 25;
 const grassStretch = 150;
+
+// Flames
+const flames1BaseHeight = 200;
+// Flames animation variables
+const flames2BaseHeight = 350;
+const flames2AnimationSpeed = 0.3; // Adjust speed of movement
+const flames2AnimationMaxOffset = 10; // Maximum upward movement
 
 // --- Canvas Setup ---
 const canvas = document.getElementById("game");
@@ -77,37 +90,42 @@ const gameOverScore = document.querySelector('.game-over-score');
 
 // --- Image Setup ---
 const platformImage = new Image();
-platformImage.src = "texture3.png"; // Ensure path is correct
+platformImage.src = "texture3.png";
 
-const flamesImage = new Image();
-flamesImage.src = "flames.png";
+const flames1Image = new Image();
+flames1Image.src = "flames.png";
+
+const flames2Image = new Image();
+flames2Image.src = "flames.png";
 
 const hellImage = new Image();
 hellImage.src = "dirtS.jpg";
 
+const createPattern = (image, scale = 1, repetition = "repeat") => {
+    const canvas = document.createElement("canvas");
+    [canvas.width, canvas.height] = [image.width * scale, image.height * scale];
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    return ctx.createPattern(canvas, repetition);
 
-// Create resized patterns using an offscreen canvas
-function createResizedPattern(image, scaleFactor, repetition = "repeat") {
-    const offscreen = document.createElement("canvas");
-    offscreen.width = image.width * scaleFactor;
-    offscreen.height = image.height * scaleFactor;
-    const offCtx = offscreen.getContext("2d");
-    offCtx.drawImage(image, 0, 0, offscreen.width, offscreen.height);
-    return ctx.createPattern(offscreen, repetition);
 }
 
-flamesImage.onload = function () {
-    let scaleFactor = 0.5; // adjust as needed
-    flamesPattern = createResizedPattern(flamesImage, scaleFactor);
+
+flames1Image.onload = () => {
+    flames1Pattern = createPattern(flames1Image, 0.5, "repeat-x");
     resetGame();
 };
-hellImage.onload = function () {
-    let hellScaleFactor = 0.5; // adjust as needed
-    hellPattern = createResizedPattern(hellImage, hellScaleFactor, "repeat-x");
+
+flames2Image.onload = () => {
+    flames2Pattern = createPattern(flames2Image, 0.8, "repeat-x");
     resetGame();
 };
-platformImage.onload = function () {
-    platformPattern = ctx.createPattern(platformImage, "repeat");
+hellImage.onload = () => {
+    hellPattern = createPattern(hellImage, 0.5, "repeat-x");
+    resetGame();
+};
+platformImage.onload = () => {
+    platformPattern = createPattern(platformImage);
     resetGame(); // Initial draw once the platform pattern is ready
 };
 
@@ -134,10 +152,10 @@ function resetGame() {
     generatePlatform();
     generatePlatform();
 
-    // Reset sticks and hero positions
+    // Reset sticks and ghost positions
     sticks = [{x: platforms[0].x + platforms[0].w, length: 0, rotation: 0}];
-    heroX = platforms[0].x + platforms[0].w - heroDistanceFromEdge;
-    heroY = 0;
+    ghostX = platforms[0].x + platforms[0].w - ghostDistanceFromEdge;
+    ghostY = 0;
 
     // Generate trees and corresponding gravestones
     for (let i = 0; i < 10; i++) {
@@ -192,16 +210,21 @@ function animate(timestamp) {
         return;
     }
 
+    animateGhostFloat();
+
     switch (phase) {
         case "waiting":
-            return; // Do nothing until input
+            animateGhostFloat();
+            break; // Do nothing until input
 
         case "stretching": {
+            animateGhostFloat();
             sticks.last().length += (timestamp - lastTimestamp) / stretchingSpeed;
             break;
         }
 
         case "turning": {
+            animateGhostFloat();
             sticks.last().rotation += (timestamp - lastTimestamp) / turningSpeed;
             if (sticks.last().rotation > 90) {
                 sticks.last().rotation = 90;
@@ -241,18 +264,19 @@ function animate(timestamp) {
         }
 
         case "walking": {
-            heroX += (timestamp - lastTimestamp) / walkingSpeed;
+            animateGhostFloat();
+            ghostX += (timestamp - lastTimestamp) / walkingSpeed;
             const [nextPlatform] = thePlatformTheStickHits();
             if (nextPlatform) {
-                const maxHeroX = nextPlatform.x + nextPlatform.w - heroDistanceFromEdge;
-                if (heroX > maxHeroX) {
-                    heroX = maxHeroX;
+                const maxGhostX = nextPlatform.x + nextPlatform.w - ghostDistanceFromEdge;
+                if (ghostX > maxGhostX) {
+                    ghostX = maxGhostX;
                     phase = "transitioning";
                 }
             } else {
-                const maxHeroX = sticks.last().x + sticks.last().length + heroWidth;
-                if (heroX > maxHeroX) {
-                    heroX = maxHeroX;
+                const maxGhostX = sticks.last().x + sticks.last().length + ghostWidth;
+                if (ghostX > maxGhostX) {
+                    ghostX = maxGhostX;
                     phase = "falling";
                 }
             }
@@ -261,6 +285,7 @@ function animate(timestamp) {
 
 
         case "transitioning": {
+            animateGhostFloat();
             sceneOffset += (timestamp - lastTimestamp) / transitioningSpeed;
             const [nextPlatform] = thePlatformTheStickHits();
             if (sceneOffset > nextPlatform.x + nextPlatform.w - paddingX) {
@@ -275,11 +300,13 @@ function animate(timestamp) {
         }
 
         case "falling": {
+            ghostFloatOffset = 0; // Reset float offset when falling
+
             if (sticks.last().rotation < 180)
                 sticks.last().rotation += (timestamp - lastTimestamp) / turningSpeed;
-            heroY += (timestamp - lastTimestamp) / fallingSpeed;
-            const maxHeroY = platformHeight + 100 + (window.innerHeight - canvasHeight) / 2;
-            if (heroY > maxHeroY) {
+            ghostY += (timestamp - lastTimestamp) / fallingSpeed;
+            const maxGhostY = platformHeight + 100 + (window.innerHeight - canvasHeight) / 2;
+            if (ghostY > maxGhostY) {
                 endGame();
             }
             break;
@@ -288,6 +315,8 @@ function animate(timestamp) {
         default:
             throw Error("Wrong phase");
     }
+
+    animateFlames();
 
     draw();
     lastTimestamp = timestamp;
@@ -307,29 +336,55 @@ function draw() {
         (window.innerHeight - canvasHeight) / 2
     );
     drawPlatforms();
-    drawHero();
+    drawGhostPosition();
     drawSticks();
     ctx.restore();
 }
 
 function drawBackground() {
     // Sky gradient.
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, "#87CEEB");
-    gradient.addColorStop(1, "#FEF1E1");
-    ctx.fillStyle = gradient;
+    const gradientBackground = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradientBackground.addColorStop(0, "#87CEEB");
+    gradientBackground.addColorStop(1, "#FEF1E1");
+    ctx.fillStyle = gradientBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw hills.
     drawHill(hill1BaseHeight, hill1Amplitude, hill1Stretch, "#95C629FF");
     drawHill(hill2BaseHeight, hill2Amplitude, hill2Stretch, "#659F1C");
 
+    ctx.save();
+
+    const centerX = canvas.width / 2;
+
+    const gradientLight = ctx.createRadialGradient(
+        centerX, 0, 0,                // Center point at top of canvas
+        centerX, 0, canvas.height * 0.8  // Increased radius for wider beam
+    );
+
+// Intensified color stops for heavenly light effect
+    gradientLight.addColorStop(0, 'rgba(255,255,255,0.95)');    // Much brighter center
+    gradientLight.addColorStop(0.2, 'rgba(255,255,255,0.75)');  // Strong inner glow
+    gradientLight.addColorStop(0.4, 'rgba(255,255,255,0.71)');   // Medium transition
+    gradientLight.addColorStop(0.7, 'rgba(255,255,255,0.2)');   // Soft outer glow
+    gradientLight.addColorStop(1, 'rgba(255,255,255,0)');       // Fade to transparent
+
+    // Apply the gradient
+    ctx.fillStyle = gradientLight;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.restore();
+
     // Draw grass (overlapping the hills).
     drawGrass(grassBaseHeight, grassAmplitude, grassStretch, "#263c0a");
 
     // Draw hell and flames.
     drawHell();
-    drawFlames();
+    // Draw flames
+    drawFlames(2, flames2BaseHeight, { x: 0.4, y: 0.3 }, flames2Offset); // Animated flames2
+    drawFlames(1, flames1BaseHeight); // Original flames1
+
+
 
     // Draw trees.
     trees.forEach(tree => drawTree(tree.x, tree.color));
@@ -384,17 +439,22 @@ function drawHell() {
     ctx.fillRect(0, window.innerHeight - hellBaseHeight, window.innerWidth, hellBaseHeight);
 }
 
-function drawFlames() {
-    if (flamesPattern === null) {
-        console.warn("Flames pattern not loaded yet.");
+// Combined flames drawing function
+function drawFlames(patternType, baseHeight, scale = { x: 0.4, y: 0.3 }, yOffset = 0) {
+    const pattern = patternType === 1 ? flames1Pattern : flames2Pattern;
+
+    if (pattern === null) {
+        console.warn(`Flames pattern ${patternType} not loaded yet.`);
         return;
     }
+
     const matrix = new DOMMatrix()
-        .translate(-sceneOffset, window.innerHeight - flamesBaseHeight)
-        .scale(0.4, 0.3);
-    flamesPattern.setTransform(matrix);
-    ctx.fillStyle = flamesPattern;
-    ctx.fillRect(0, window.innerHeight - flamesBaseHeight, window.innerWidth, flamesBaseHeight);
+        .translate(-sceneOffset, window.innerHeight - baseHeight + yOffset)
+        .scale(scale.x, scale.y);
+
+    pattern.setTransform(matrix);
+    ctx.fillStyle = pattern;
+    ctx.fillRect(0, window.innerHeight - baseHeight + yOffset, window.innerWidth, baseHeight);
 }
 
 function drawTree(x, color) {
@@ -542,16 +602,32 @@ function drawGhost(x, y, size) {
     ctx.fill();
 }
 
-function drawHero() {
+function drawGhostPosition() {
     ctx.save();
     const ghostSize = 16;
-    const heroCenterX = heroX;
-    const heroCenterY = heroY + canvasHeight - platformHeight - heroHeight / 1.2;
-    const ghostDrawingY = heroCenterY + 0.2 * ghostSize;
-    ctx.translate(heroCenterX, ghostDrawingY);
+    const ghostCenterX = ghostX;
+
+    // Only apply float offset if ghost is floating
+    const floatOffset = ghostFloatOffset || 0;
+    const ghostCenterY = ghostY + canvasHeight - platformHeight - ghostHeight / 1.2 + floatOffset;
+    const ghostDrawingY = ghostCenterY + 0.2 * ghostSize;
+
+    ctx.translate(ghostCenterX, ghostDrawingY);
     drawGhost(0, 0.2 * ghostSize, ghostSize);
     ctx.restore();
+
 }
+
+function animateGhostFloat() {
+
+
+    ghostFloatOffset += ghostFloatDirection * ghostFloatSpeed;
+
+    if (Math.abs(ghostFloatOffset) >= ghostFloatMaxOffset) {
+        ghostFloatDirection *= -1;
+    }
+}
+
 
 // --- Collision / Hit Detection ---
 function thePlatformTheStickHits() {
@@ -581,6 +657,17 @@ function endGame() {
 }
 
 // --- Utility Functions ---
+// Animation function
+function animateFlames() {
+    // Move the flames up or down
+    flames2Offset += flames2Direction * flames2AnimationSpeed;
+
+    // If the flames have moved too far, change direction
+    if (Math.abs(flames2Offset) >= flames2AnimationMaxOffset) {
+        flames2Direction *= -1;
+    }
+}
+
 function randomBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
