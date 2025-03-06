@@ -77,7 +77,7 @@ body {
 
 /* Specific heights for overlays */
 .start-container {
-    height: 580px;
+    height: 600px;
 }
 .game-over-container {
     height: 600px;
@@ -86,12 +86,16 @@ body {
 /* -------------------- Typography -------------------- */
 h1 {
     color: #F68B00;
-    font-size: 36px;
-    padding-top: 40px;
+    padding-top: 5px;
+    font-family: "Grenze", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 48px;
 }
 iframe {
     border: solid 3px #000000;
     border-radius: 10px;
+
 }
 .start-indhold,
 .indhold {
@@ -109,7 +113,9 @@ iframe {
     width: 260px;
     height: 250px;
 }
+.start-indhold h1{
 
+}
 .start-button h2 {
     padding: 10px;
     border-radius: 10px;
