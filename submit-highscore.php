@@ -52,7 +52,7 @@ if ($score < 1) {
 }
 
 //send score to Highscore api
-$url = 'games/43/highscores';
+$url = 'games/70/highscores';
 $payload = [
     'player' => $player,
     'score' => $score,

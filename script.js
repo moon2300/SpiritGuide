@@ -22,6 +22,7 @@ let graveStones = [];  // Use lower-case 'g' consistently
 let score = 0;
 let bonus = 0;
 let gameRunning = false;
+let gameStarted = false;
 
 // --- Constants ---
 const canvasWidth = 375;
@@ -618,13 +619,15 @@ function submitScore(player, score) {
 startButton.addEventListener('click', () => {
     startOverlay.style.display = "none";
     resetGame();
+    gameStarted = true;
     gameRunning = true;
     window.requestAnimationFrame(animate);
 });
 
 // Mouse Input for Stretching and Turning
 window.addEventListener("mousedown", () => {
-    // Hide instructions when mousedown occurs.
+    if (!gameStarted) return; // Ignore if game hasn't started yet.
+    // Hide instructions on first input.
     if (instructionsElement) {
         instructionsElement.style.opacity = "0";
     }
@@ -635,10 +638,18 @@ window.addEventListener("mousedown", () => {
     }
 });
 
+window.addEventListener("mouseup", () => {
+    if (!gameStarted) return;
+    if (phase === "stretching") {
+        phase = "turning";
+    }
+});
+
+// Keyboard Input for Stretching and Turning (Space key)
 window.addEventListener("keydown", (e) => {
+    if (!gameStarted) return;
     if (e.code === "Space") {
         e.preventDefault();
-        // Hide instructions when Space is pressed.
         if (instructionsElement) {
             instructionsElement.style.opacity = "0";
         }
@@ -650,20 +661,10 @@ window.addEventListener("keydown", (e) => {
     }
 });
 
-
-window.addEventListener("mouseup", () => {
-    if (phase === "stretching") {
-        phase = "turning";
-
-    }
-});
-
 window.addEventListener("keyup", (e) => {
-    // Also check if it's the Space key
+    if (!gameStarted) return;
     if (e.code === "Space") {
-        // Prevent scrolling if needed
         e.preventDefault();
-        // If the game is stretching, switch to "turning"
         if (phase === "stretching") {
             phase = "turning";
         }
