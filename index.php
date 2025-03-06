@@ -6,7 +6,7 @@
     <title>Spirit Guide</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
-
+    <link rel="shortcut icon" href="piczz/Ghost.svg" TYPE="image/x-icon">
 </head>
 <body>
 

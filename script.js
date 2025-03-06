@@ -699,6 +699,9 @@ submitButton.addEventListener('click', (e) => {
 
 window.addEventListener('keydown', (e) => {
     if (e.code === 'Enter') {
-        window.location.reload();
-    }
+        startOverlay.style.display = "none";
+        resetGame();
+        gameStarted = true;
+        gameRunning = true;
+        window.requestAnimationFrame(animate);}
 });
